@@ -4,8 +4,8 @@
       <div class="footer-grid">
         
         <div class="footer-brand">
-          <a href="#" class="brand-logo" style="color: #ffffff;">
-            PRISMA PAINTS
+          <a href="#" class="brand-logo" aria-label="Prisma Paints Home" style="display: inline-block; margin-bottom: 16px;">
+            <img src="/images/prisma_logo.png" alt="Prisma Paints Logo" style="height: 80px; width: auto; object-fit: contain; border-radius: 6px;" />
           </a>
           <p>Prisma Modern Decorative Paints is a paint manufacturing company located at Sitra Industrial Area, Kingdom of Bahrain.</p>
         </div>

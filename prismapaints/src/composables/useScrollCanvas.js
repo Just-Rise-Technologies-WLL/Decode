@@ -6,7 +6,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
  * from 0:18 to 1:18 segment of 3D Private Residence Architectural Walkthrough Video.
  */
 export function useScrollCanvas(canvasRef, containerRef, options = {}) {
-  const frameCount = options.frameCount || 300
+  const frameCount = options.frameCount || 350
   const imagePrefix = options.imagePrefix || '/sequence/frame_'
   const imageExt = options.imageExt || '.jpg'
 

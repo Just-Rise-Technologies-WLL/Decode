@@ -2,9 +2,8 @@
   <header class="navbar-wrapper">
     <nav class="navbar-floating-pill">
       <!-- Brand Logo -->
-      <a href="#" class="brand-logo">
-        <span class="logo-icon">▲</span>
-        <span class="logo-text">PRISMA PAINTS</span>
+      <a href="#" class="brand-logo" aria-label="Prisma Paints Home">
+        <img src="/images/prisma_logo.png" alt="Prisma Paints Logo" class="logo-img" />
       </a>
 
       <!-- Desktop Navigation Links -->
@@ -61,7 +60,7 @@ defineEmits(['open-modal'])
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 1.15rem;
@@ -69,13 +68,11 @@ defineEmits(['open-modal'])
   color: #ffffff;
 }
 
-.logo-icon {
-  color: var(--clr-accent-gold);
-  font-size: 1.2rem;
-}
-
-.logo-text {
-  color: #ffffff;
+.logo-img {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 6px;
 }
 
 .nav-links-desktop {

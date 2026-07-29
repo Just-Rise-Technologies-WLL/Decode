@@ -32,6 +32,10 @@
 ### [2026-07-29 13:43]
 - **Activity**: Extracted 300 HD Frame Sequence & Implemented Inertial LERP Physics Engine in `useScrollCanvas.js`.
 
-### [2026-07-29 13:55]
-- **Activity**: Hero Overlay Brightness Adjusted in `ScrollHero.vue`.
-- **Details**: Adjusted `.hero-overlay` in `ScrollHero.vue` to restore 100% original bright, vibrant 4K video quality.
+### [2026-07-30 02:25]
+- **Activity**: Removed Text from Footer Logo.
+- **Details**: Removed `PRISMA PAINTS` text span from `Footer.vue` to keep only the clean logo image in the footer brand section.
+
+
+
+

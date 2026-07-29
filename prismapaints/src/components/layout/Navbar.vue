@@ -1,121 +1,113 @@
 <template>
-  <header :class="['navbar', { scrolled: isScrolled }]">
-    <div class="nav-container">
+  <header class="navbar-wrapper">
+    <nav class="navbar-floating-pill">
+      <!-- Brand Logo -->
       <a href="#" class="brand-logo">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 14.5c-1.38 0-2.5-1.12-2.5-2.5s2.5-4.5 2.5-4.5 2.5 3.12 2.5 4.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
-        PRISMA PAINTS
+        <span class="logo-icon">▲</span>
+        <span class="logo-text">PRISMA PAINTS</span>
       </a>
 
-      <ul class="nav-menu">
-        <li><a href="#architectural" class="nav-link">Architectural</a></li>
-        <li><a href="#industrial" class="nav-link">Industrial</a></li>
-        <li><a href="#studio" class="nav-link">Color Studio</a></li>
-        <li><a href="#projects" class="nav-link">Projects</a></li>
-        <li><a href="#contact" @click.prevent="$emit('open-modal')" class="nav-link">Contact</a></li>
-      </ul>
+      <!-- Desktop Navigation Links -->
+      <div class="nav-links-desktop">
+        <a href="#architectural" class="nav-link">ARCHITECTURAL</a>
+        <a href="#industrial" class="nav-link">INDUSTRIAL</a>
+        <a href="#studio" class="nav-link">COLOR STUDIO</a>
+        <a href="#projects" class="nav-link">PROJECTS</a>
+        <a href="#contact" class="nav-link">CONTACT</a>
+      </div>
 
-      <button @click="$emit('open-modal')" class="btn-primary">GET IN TOUCH</button>
-    </div>
+      <!-- Header CTA Button -->
+      <div>
+        <button @click="$emit('open-modal')" class="btn-primary nav-cta-btn">GET IN TOUCH</button>
+      </div>
+    </nav>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-
 defineEmits(['open-modal'])
-
-const isScrolled = ref(false)
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 80
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <style scoped>
-.navbar {
+.navbar-wrapper {
   position: fixed;
-  top: 0;
+  top: 16px;
   left: 0;
-  width: 100%;
+  right: 0;
   z-index: 1000;
-  padding: 20px 0;
-  transition: var(--transition-smooth);
-}
-
-.navbar.scrolled {
-  background: rgba(249, 247, 244, 0.92);
-  backdrop-filter: blur(16px);
-  padding: 12px 0;
-  box-shadow: var(--shadow-soft);
-  border-bottom: 1px solid rgba(230, 224, 216, 0.5);
-}
-
-.nav-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.navbar-floating-pill {
   width: 90%;
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 1240px;
+  height: 64px;
+  background: rgba(36, 34, 32, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-family: var(--font-heading);
   font-weight: 700;
+  font-size: 1.15rem;
   letter-spacing: 2px;
-  color: var(--clr-primary);
-  text-transform: uppercase;
+  color: #ffffff;
 }
 
-.brand-logo svg {
-  width: 32px;
-  height: 32px;
-  fill: var(--clr-primary);
+.logo-icon {
+  color: var(--clr-accent-gold);
+  font-size: 1.2rem;
 }
 
-.nav-menu {
+.logo-text {
+  color: #ffffff;
+}
+
+.nav-links-desktop {
   display: flex;
-  gap: 36px;
-  list-style: none;
+  gap: 28px;
   align-items: center;
 }
 
 .nav-link {
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 1px;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
   text-transform: uppercase;
-  color: var(--clr-text-main);
-  position: relative;
-  padding: 4px 0;
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--clr-primary);
   transition: var(--transition-smooth);
+  position: relative;
 }
 
-.nav-link:hover::after {
-  width: 100%;
+.nav-link:hover {
+  color: var(--clr-accent-gold);
+}
+
+.nav-cta-btn {
+  padding: 10px 22px;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  border-radius: 30px;
+}
+
+@media (max-width: 900px) {
+  .nav-links-desktop {
+    display: none;
+  }
 }
 </style>

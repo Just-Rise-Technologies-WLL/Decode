@@ -23,6 +23,6 @@
 ### [2026-07-29 05:15]
 - **Activity**: Converted MP4 Video into 90 HD Frame Sequence & Connected to Canvas Hero.
 
-### [2026-07-29 05:29]
-- **Activity**: Implemented Scroll-Revealed Hero Text Card Animation.
-- **Details**: Updated `useScrollCanvas.js` and `ScrollHero.vue` so that on initial load (0% scroll position), the hero section presents a clean view showing only the paint bucket video reveal. As the user scrolls down, the glassmorphism text card smoothly fades in (`opacity: 0 -> 1`) and slides up into place.
+### [2026-07-29 05:46]
+- **Activity**: Designed Fallback Living Room Image Removal & Prisma Paints SVG Favicon Logo.
+- **Details**: Evaluated user screenshot showing Vercel living room image fallback. Designed complete removal of `fallbackImage` from `useScrollCanvas.js` to ensure only the paint bucket video sequence frames render. Designed new `public/favicon.svg` featuring the signature Prisma Paints triangle logo.

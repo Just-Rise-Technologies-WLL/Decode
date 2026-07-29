@@ -11,9 +11,11 @@
 - **Build System**: Vite 5+ (`vite.config.js`)
 - **Framework**: Vue 3 (Composition API with `<script setup>`)
 - **Git Config**: [.gitignore](file:///Volumes/Files/AppDev/justrise_bahrain/Decode/prismapaints/.gitignore)
+- **Favicon**: `public/favicon.svg` (Prisma Paints Signature Multi-color Triangle Logo)
 - **Modular Components**:
-  - `src/components/layout/Navbar.vue` & `Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (Scroll-Revealed Text Card Animation)
+  - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar)
+  - `src/components/layout/Footer.vue`
+  - `src/components/hero/ScrollHero.vue` (Scroll-Revealed Text Card Animation with 40% Delay)
   - `src/components/categories/CategoryGrid.vue` & `CategoryCard.vue`
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Side-Scroll + Feature Before/After Slider)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Precise Wall Mask Paint Engine), `SwatchGrid.vue`
@@ -21,18 +23,8 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Universal Media Engine: 90 HD Frames extracted from Paint bucket color splash video)
+  - `src/composables/useScrollCanvas.js` (Universal Canvas Engine: 90 HD Frames extracted from Paint bucket color splash video; Fallback living room image completely removed)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
-
----
-
-## Deep Analysis & Scroll-Revealed Hero Card (Rule 4 & 5)
-
-### Component: `src/components/hero/ScrollHero.vue`
-- **Behavior**:
-  - At 0% scroll position (page top), the glassmorphism text card (`.hero-card`) is hidden (`opacity: 0`, `transform: translateY(40px)`), presenting a clean view of the paint bucket splash reveal.
-  - As the user scrolls down ($0.20 \rightarrow 0.70$ progress), the text card smoothly fades in to full opacity and slides up into position.
-  - When scrolling back to top, it smoothly fades back out.
 
 ---
 

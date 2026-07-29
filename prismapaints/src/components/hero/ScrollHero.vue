@@ -5,7 +5,7 @@
       <div class="hero-overlay"></div>
 
       <div class="hero-content-slider">
-        <!-- Text Card Container - Smoothly Fades In & Slides Up on Scroll -->
+        <!-- Text Card Container - Delayed Reveal (Appears smoothly after 40% scroll) -->
         <div 
           class="hero-card"
           :style="{
@@ -26,7 +26,7 @@
       <!-- Scroll Mouse Indicator (Fades out as user scrolls down) -->
       <div 
         class="scroll-indicator"
-        :style="{ opacity: Math.max(0, 0.8 - scrollProgress * 2) }">
+        :style="{ opacity: Math.max(0, 0.8 - scrollProgress * 2.5) }">
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
@@ -47,27 +47,27 @@ const containerRef = ref(null)
 
 const { scrollProgress } = useScrollCanvas(canvasRef, containerRef)
 
-// Smooth Opacity Interpolation: 0 at start -> 1.0 after 20% scroll
+// Delayed Opacity Interpolation: 0 until 40% scroll -> 1.0 by 78% scroll
 const cardOpacity = computed(() => {
   const p = scrollProgress.value
-  if (p <= 0.12) return 0
-  if (p >= 0.55) return 1
-  return (p - 0.12) / (0.55 - 0.12)
+  if (p <= 0.40) return 0
+  if (p >= 0.78) return 1
+  return (p - 0.40) / (0.78 - 0.40)
 })
 
-// Smooth Slide-Up Interpolation: translateY 45px -> 0px
+// Delayed Slide-Up Interpolation: translateY 50px -> 0px
 const cardTranslateY = computed(() => {
   const p = scrollProgress.value
-  if (p <= 0.12) return 45
-  if (p >= 0.55) return 0
-  return 45 * (1 - (p - 0.12) / (0.55 - 0.12))
+  if (p <= 0.40) return 50
+  if (p >= 0.78) return 0
+  return 50 * (1 - (p - 0.40) / (0.78 - 0.40))
 })
 </script>
 
 <style scoped>
 .hero-scroll-container {
   position: relative;
-  height: 300vh;
+  height: 320vh;
 }
 
 .hero-pinned-wrapper {
@@ -97,7 +97,7 @@ const cardTranslateY = computed(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(36, 34, 32, 0.2) 0%, rgba(36, 34, 32, 0.45) 100%);
+  background: linear-gradient(180deg, rgba(36, 34, 32, 0.25) 0%, rgba(36, 34, 32, 0.5) 100%);
   z-index: 2;
 }
 
@@ -111,16 +111,16 @@ const cardTranslateY = computed(() => {
 }
 
 .hero-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(36, 34, 32, 0.78);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 60px 48px;
   max-width: 580px;
-  box-shadow: var(--shadow-glass);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   will-change: transform, opacity;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-subtitle {
@@ -142,7 +142,7 @@ const cardTranslateY = computed(() => {
 
 .hero-desc {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
   margin-bottom: 30px;
   font-weight: 300;
 }

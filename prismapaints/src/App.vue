@@ -9,7 +9,7 @@
     <!-- Categories Grid Section -->
     <CategoryGrid />
 
-    <!-- Finishes Grid Section -->
+    <!-- Finishes Horizontal Side-Scroll Section -->
     <FinishesGrid @open-modal="openModal" />
 
     <!-- Color Studio Component -->

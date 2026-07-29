@@ -5,7 +5,14 @@
       <div class="hero-overlay"></div>
 
       <div class="hero-content-slider">
-        <div class="hero-card">
+        <!-- Text Card Container - Smoothly Fades In & Slides Up on Scroll -->
+        <div 
+          class="hero-card"
+          :style="{
+            opacity: cardOpacity,
+            transform: `translateY(${cardTranslateY}px)`,
+            pointerEvents: cardOpacity > 0.3 ? 'auto' : 'none'
+          }">
           <span class="hero-subtitle">INSPIRED INTERIOR SHADES</span>
           <h1 class="hero-title">Warmth and comfort combined</h1>
           <p class="hero-desc">Bring a natural, grounding energy to your home with our earth-toned luxury collection, designed to create inviting, welcoming spaces.</p>
@@ -16,7 +23,10 @@
         </div>
       </div>
 
-      <div class="scroll-indicator">
+      <!-- Scroll Mouse Indicator (Fades out as user scrolls down) -->
+      <div 
+        class="scroll-indicator"
+        :style="{ opacity: Math.max(0, 0.8 - scrollProgress * 2) }">
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
@@ -27,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useScrollCanvas } from '../../composables/useScrollCanvas.js'
 
 defineEmits(['open-modal'])
@@ -35,7 +45,23 @@ defineEmits(['open-modal'])
 const canvasRef = ref(null)
 const containerRef = ref(null)
 
-useScrollCanvas(canvasRef, containerRef)
+const { scrollProgress } = useScrollCanvas(canvasRef, containerRef)
+
+// Smooth Opacity Interpolation: 0 at start -> 1.0 after 20% scroll
+const cardOpacity = computed(() => {
+  const p = scrollProgress.value
+  if (p <= 0.12) return 0
+  if (p >= 0.55) return 1
+  return (p - 0.12) / (0.55 - 0.12)
+})
+
+// Smooth Slide-Up Interpolation: translateY 45px -> 0px
+const cardTranslateY = computed(() => {
+  const p = scrollProgress.value
+  if (p <= 0.12) return 45
+  if (p >= 0.55) return 0
+  return 45 * (1 - (p - 0.12) / (0.55 - 0.12))
+})
 </script>
 
 <style scoped>
@@ -71,7 +97,7 @@ useScrollCanvas(canvasRef, containerRef)
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(36, 34, 32, 0.3) 0%, rgba(36, 34, 32, 0.5) 100%);
+  background: linear-gradient(180deg, rgba(36, 34, 32, 0.2) 0%, rgba(36, 34, 32, 0.45) 100%);
   z-index: 2;
 }
 
@@ -87,11 +113,14 @@ useScrollCanvas(canvasRef, containerRef)
 .hero-card {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 24px;
   padding: 60px 48px;
   max-width: 580px;
   box-shadow: var(--shadow-glass);
+  will-change: transform, opacity;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-subtitle {
@@ -101,6 +130,7 @@ useScrollCanvas(canvasRef, containerRef)
   color: var(--clr-accent-gold);
   margin-bottom: 14px;
   font-weight: 600;
+  display: block;
 }
 
 .hero-title {
@@ -131,7 +161,7 @@ useScrollCanvas(canvasRef, containerRef)
   font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
 .scroll-mouse {

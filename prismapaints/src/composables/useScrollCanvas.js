@@ -1,46 +1,31 @@
-import { onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 /**
  * Universal Scroll Canvas Engine
  * Auto-detects in order:
- * 1. MP4 Video File (/video/hero.mp4) - Double-buffered Canvas scrub
- * 2. Image Sequence (/sequence/frame_0001.webp .. frame_0120.webp)
- * 3. Procedural Luxury Paint Canvas Animation (Fallback)
+ * 1. Image Sequence (/sequence/frame_0001.jpg .. frame_0090.jpg)
+ * 2. MP4 Video File (/video/Paint_bucket_color_splash_reveal_202607290340.mp4)
+ * 3. Luxury Interior Photo Scroll Reveal (Fallback)
  */
 export function useScrollCanvas(canvasRef, containerRef, options = {}) {
-  const frameCount = options.frameCount || 60
+  const frameCount = options.frameCount || 90
   const imagePrefix = options.imagePrefix || '/sequence/frame_'
-  const imageExt = options.imageExt || '.webp'
-  const videoSrc = options.videoSrc || '/video/hero.mp4'
+  const imageExt = options.imageExt || '.jpg'
 
   let ctx = null
   let currentFrameIndex = 0
-  let scrollProgress = 0
+  const scrollProgress = ref(0)
 
   // Modes
-  let mode = 'procedural' // 'video' | 'sequence' | 'procedural'
+  let mode = 'sequence'
   const loadedImages = []
   let videoElement = null
 
-  // 1. Try Video Detection
-  const initVideo = () => {
-    const video = document.createElement('video')
-    video.src = videoSrc
-    video.preload = 'auto'
-    video.muted = true
-    video.playsInline = true
-    video.oncanplaythrough = () => {
-      videoElement = video
-      mode = 'video'
-      render()
-    }
-    video.onerror = () => {
-      // If video not found, fallback to sequence
-      initSequence()
-    }
-  }
+  // Fallback high-res luxury interior image
+  const fallbackImage = new Image()
+  fallbackImage.src = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80'
 
-  // 2. Try Sequence Detection
+  // 1. Preload Image Sequence
   const initSequence = () => {
     let loadedCount = 0
     for (let i = 1; i <= frameCount; i++) {
@@ -54,12 +39,35 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
           render()
         }
       }
+      img.onerror = () => {
+        if (loadedCount < 5 && mode !== 'video') {
+          initVideo()
+        }
+      }
       loadedImages.push(img)
     }
   }
 
+  // 2. Try Video Detection Fallback
+  const initVideo = () => {
+    const video = document.createElement('video')
+    video.src = '/video/Paint_bucket_color_splash_reveal_202607290340.mp4'
+    video.preload = 'auto'
+    video.muted = true
+    video.playsInline = true
+    video.oncanplaythrough = () => {
+      videoElement = video
+      mode = 'video'
+      render()
+    }
+    video.onerror = () => {
+      mode = 'photo'
+      render()
+    }
+  }
+
   // Draw image or video with aspect ratio 'cover'
-  const drawCoverMedia = (media, naturalWidth, naturalHeight) => {
+  const drawCoverMedia = (media, naturalWidth, naturalHeight, zoom = 1) => {
     if (!canvasRef.value) return
     const canvas = canvasRef.value
     const w = canvas.width
@@ -70,16 +78,15 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     let drawW, drawH, drawX, drawY
 
     if (canvasRatio > mediaRatio) {
-      drawW = w
-      drawH = w / mediaRatio
-      drawX = 0
-      drawY = (h - drawH) / 2
+      drawW = w * zoom
+      drawH = (w / mediaRatio) * zoom
     } else {
-      drawH = h
-      drawW = h * mediaRatio
-      drawX = (w - drawW) / 2
-      drawY = 0
+      drawH = h * zoom
+      drawW = (h * mediaRatio) * zoom
     }
+
+    drawX = (w - drawW) / 2
+    drawY = (h - drawH) / 2
 
     ctx.drawImage(media, drawX, drawY, drawW, drawH)
   }
@@ -94,68 +101,39 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     const h = canvas.height
     ctx.clearRect(0, 0, w, h)
 
-    // Mode 1: Video File Scrubbing
-    if (mode === 'video' && videoElement && videoElement.duration) {
-      videoElement.currentTime = scrollProgress * videoElement.duration
-      drawCoverMedia(videoElement, videoElement.videoWidth || w, videoElement.videoHeight || h)
-      return
-    }
-
-    // Mode 2: Image Sequence Scrubbing
+    // Mode 1: Image Sequence Scrubbing (90 Frames extracted from Paint bucket color splash video)
     if (mode === 'sequence' && loadedImages[currentFrameIndex] && loadedImages[currentFrameIndex].complete && loadedImages[currentFrameIndex].naturalWidth !== 0) {
       const img = loadedImages[currentFrameIndex]
       drawCoverMedia(img, img.naturalWidth, img.naturalHeight)
       return
     }
 
-    // Mode 3: Procedural Paint Canvas (Fallback)
-    const progress = scrollProgress
-    const grad = ctx.createLinearGradient(0, 0, w, h)
-    const r1 = Math.round(124 - progress * 40)
-    const g1 = Math.round(59 - progress * 20)
-    const b1 = Math.round(41 - progress * 15)
-    grad.addColorStop(0, `rgb(${r1}, ${g1}, ${b1})`)
-    grad.addColorStop(1, '#2b1816')
-    ctx.fillStyle = grad
-    ctx.fillRect(0, 0, w, h)
-
-    // Fluid paint wave
-    ctx.save()
-    ctx.beginPath()
-    const waveY = h * (0.85 - progress * 0.5)
-    ctx.moveTo(0, h)
-    ctx.lineTo(0, waveY)
-
-    for (let x = 0; x <= w; x += 30) {
-      const y = waveY + Math.sin(x * 0.005 + progress * Math.PI * 2) * (40 + progress * 30)
-      ctx.lineTo(x, y)
+    // Mode 2: Video File Scrubbing
+    if (mode === 'video' && videoElement && videoElement.duration) {
+      videoElement.currentTime = scrollProgress.value * videoElement.duration
+      drawCoverMedia(videoElement, videoElement.videoWidth || w, videoElement.videoHeight || h)
+      return
     }
 
-    ctx.lineTo(w, h)
-    ctx.closePath()
+    // Mode 3: Luxury Interior Photo Scroll Reveal (Fallback)
+    if (fallbackImage.complete && fallbackImage.naturalWidth !== 0) {
+      const zoom = 1 + scrollProgress.value * 0.15
+      drawCoverMedia(fallbackImage, fallbackImage.naturalWidth, fallbackImage.naturalHeight, zoom)
 
-    const waveGrad = ctx.createLinearGradient(0, waveY, w, h)
-    waveGrad.addColorStop(0, '#c49a6c')
-    waveGrad.addColorStop(1, '#7c3b29')
-    ctx.fillStyle = waveGrad
-    ctx.globalAlpha = 0.85
-    ctx.fill()
-    ctx.restore()
+      const grad = ctx.createLinearGradient(0, 0, 0, h)
+      grad.addColorStop(0, 'rgba(36, 24, 22, 0.45)')
+      grad.addColorStop(0.5, 'rgba(36, 24, 22, 0.25)')
+      grad.addColorStop(1, 'rgba(36, 24, 22, 0.65)')
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, w, h)
+    } else {
+      ctx.fillStyle = '#2b1816'
+      ctx.fillRect(0, 0, w, h)
+    }
+  }
 
-    // Room wall mask reveal
-    ctx.save()
-    ctx.beginPath()
-    const radius = Math.max(w, h) * (0.15 + progress * 0.9)
-    ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2)
-    ctx.clip()
-
-    const innerGrad = ctx.createRadialGradient(w / 2, h / 2, 50, w / 2, h / 2, w)
-    innerGrad.addColorStop(0, '#d9c8b4')
-    innerGrad.addColorStop(0.7, '#8d6e53')
-    innerGrad.addColorStop(1, '#4a1d1b')
-    ctx.fillStyle = innerGrad
-    ctx.fillRect(0, 0, w, h)
-    ctx.restore()
+  fallbackImage.onload = () => {
+    render()
   }
 
   const handleResize = () => {
@@ -170,15 +148,15 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     const rect = containerRef.value.getBoundingClientRect()
     const totalHeight = containerRef.value.offsetHeight - window.innerHeight
     const scrolled = Math.max(0, -rect.top)
-    scrollProgress = Math.min(1, Math.max(0, scrolled / totalHeight))
-    currentFrameIndex = Math.floor(scrollProgress * (frameCount - 1))
+    scrollProgress.value = Math.min(1, Math.max(0, scrolled / totalHeight))
+    currentFrameIndex = Math.min(frameCount - 1, Math.floor(scrollProgress.value * frameCount))
 
     requestAnimationFrame(render)
   }
 
   onMounted(() => {
     handleResize()
-    initVideo()
+    initSequence()
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll)
   })
@@ -189,6 +167,7 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   })
 
   return {
+    scrollProgress,
     render
   }
 }

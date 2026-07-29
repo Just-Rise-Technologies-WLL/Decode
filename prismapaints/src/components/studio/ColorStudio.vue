@@ -9,62 +9,57 @@
 
       <div class="studio-grid">
         <!-- Room Visualizer -->
-        <RoomVisualizer :color="selectedColor" @copy-hex="copyHex" />
+        <RoomVisualizer 
+          :color="selectedColor" 
+          :finish="activeFinish"
+          @copy-hex="copyHex" 
+        />
 
-        <!-- Controls Panel -->
+        <!-- Streamlined Controls Panel -->
         <div class="studio-controls-panel">
-          <!-- 1. Surface -->
+          
+          <!-- 1. Surface Selection -->
           <div>
-            <div class="control-group-title">1. Choose Surface</div>
+            <div class="control-group-title">1. CHOOSE SURFACE</div>
             <div class="options-row">
               <button 
                 v-for="s in surfaces" 
                 :key="s" 
                 :class="['chip-btn', { active: activeSurface === s }]"
-                @click="activeSurface = s">
+                @click="$emit('update:activeSurface', s)">
                 {{ s }}
               </button>
             </div>
           </div>
 
-          <!-- 2. Finish -->
+          <!-- 2. Finish Selection -->
           <div>
-            <div class="control-group-title">2. Select Finish / Sheen</div>
+            <div class="control-group-title">2. SELECT FINISH / SHEEN</div>
             <div class="options-row">
               <button 
                 v-for="f in finishes" 
                 :key="f" 
                 :class="['chip-btn', { active: activeFinish === f }]"
-                @click="activeFinish = f">
+                @click="$emit('update:activeFinish', f)">
                 {{ f }}
               </button>
             </div>
           </div>
 
-          <!-- 3. Family -->
+          <!-- 3. Color Family Swatches -->
           <div>
-            <div class="control-group-title">3. Color Family</div>
-            <div class="options-row">
-              <button 
-                v-for="fam in families" 
-                :key="fam" 
-                :class="['chip-btn', { active: activeFamily === fam }]"
-                @click="activeFamily = fam">
-                {{ fam }}
-              </button>
-            </div>
+            <div class="control-group-title">3. SELECT SHADE SWATCH</div>
+            <SwatchGrid 
+              :colors="filteredColors" 
+              :selected-id="selectedColor.id" 
+              @select-color="$emit('select-color', $event)" 
+            />
           </div>
 
-          <!-- 4. Swatches -->
-          <div>
-            <div class="control-group-title">4. Select Shade Swatch</div>
-            <SwatchGrid :colors="filteredColors" :selected-id="selectedColor.id" @select-color="selectColor" />
-          </div>
-
-          <!-- Palette Shortlist -->
+          <!-- Compact Palette Shortlist -->
           <div class="palette-shortlist-card">
             <div class="palette-header">
-              <span style="font-weight: 600; font-size: 0.9rem;">MY PALETTE SHORTLIST</span>
+              <span class="shortlist-title">MY PALETTE SHORTLIST</span>
               <span class="palette-count">{{ myPalette.length }} / 8 Shades</span>
             </div>
 
@@ -75,18 +70,23 @@
                 class="mini-swatch"
                 :style="{ backgroundColor: c.hex }"
                 :title="c.name + ' - Click to remove'"
-                @click="togglePalette(c)">
+                @click="$emit('toggle-palette', c)">
               </div>
-              <p v-if="myPalette.length === 0" style="font-size: 0.85rem; color: rgba(255,255,255,0.4);">
-                Click "Add to Palette" below to build your sample shortlist.
+              <p v-if="myPalette.length === 0" class="empty-hint">
+                Click "+ Add Current Shade" to save samples.
               </p>
             </div>
 
-            <div style="display: flex; gap: 12px; margin-top: 16px;">
-              <button @click="togglePalette(selectedColor)" class="btn-outline" style="border-color: rgba(255,255,255,0.3); color: #ffffff; flex: 1;">
-                {{ isInPalette(selectedColor.id) ? '✓ Saved in Palette' : '+ Add Current Shade' }}
+            <div class="action-btn-row">
+              <button 
+                @click="$emit('toggle-palette', selectedColor)" 
+                class="btn-outline" 
+                style="border-color: rgba(255,255,255,0.3); color: #ffffff; flex: 1;">
+                {{ isInPalette(selectedColor.id) ? '✓ Saved' : '+ Add Current Shade' }}
               </button>
-              <button @click="$emit('open-modal')" class="btn-primary" style="flex: 1;">Request Sample →</button>
+              <button @click="$emit('open-modal')" class="btn-primary" style="flex: 1.2;">
+                Request Sample →
+              </button>
             </div>
           </div>
 
@@ -113,14 +113,22 @@ defineProps({
   isInPalette: Function
 })
 
-defineEmits(['select-color', 'toggle-palette', 'copy-hex', 'open-modal'])
+defineEmits([
+  'update:activeSurface',
+  'update:activeFinish',
+  'update:activeFamily',
+  'select-color', 
+  'toggle-palette', 
+  'copy-hex', 
+  'open-modal'
+])
 </script>
 
 <style scoped>
 .color-studio-section {
   background-color: var(--clr-dark-bg);
   color: #ffffff;
-  padding: 120px 0;
+  padding: 100px 0;
   position: relative;
 }
 
@@ -135,36 +143,36 @@ defineEmits(['select-color', 'toggle-palette', 'copy-hex', 'open-modal'])
 .studio-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 50px;
+  gap: 40px;
   align-items: start;
-  margin-top: 50px;
+  margin-top: 40px;
 }
 
 .studio-controls-panel {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 22px;
 }
 
 .control-group-title {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--clr-text-light);
-  opacity: 0.8;
-  margin-bottom: 12px;
+  color: var(--clr-accent-gold);
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .options-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .chip-btn {
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 30px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   background: rgba(255,255,255,0.06);
   border: 1px solid var(--clr-border-dark);
   color: var(--clr-text-light);
@@ -182,18 +190,26 @@ defineEmits(['select-color', 'toggle-palette', 'copy-hex', 'open-modal'])
   background: rgba(255, 255, 255, 0.04);
   border: 1px dashed var(--clr-border-dark);
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px;
+  margin-top: 6px;
 }
 
 .palette-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.shortlist-title {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--clr-text-light);
 }
 
 .palette-count {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--clr-accent-gold);
 }
 
@@ -201,22 +217,32 @@ defineEmits(['select-color', 'toggle-palette', 'copy-hex', 'open-modal'])
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  min-height: 48px;
+  min-height: 40px;
   align-items: center;
 }
 
 .mini-swatch {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.2);
-  position: relative;
+  border: 2px solid rgba(255,255,255,0.3);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
 .mini-swatch:hover {
-  transform: scale(1.15);
+  transform: scale(1.18);
+}
+
+.empty-hint {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.action-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 @media (max-width: 1024px) {

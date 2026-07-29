@@ -31,4 +31,7 @@
 
 ### [2026-07-29 13:43]
 - **Activity**: Extracted 300 HD Frame Sequence & Implemented Inertial LERP Physics Engine in `useScrollCanvas.js`.
-- **Details**: Extracted 300 high-density HD frames from 0:18 to 1:18 segment of `Vrender Company - Private Residence Exterior _ Interior 4K 3D Animation Walkthrough Video` into `public/sequence/frame_0001.jpg` .. `frame_0300.jpg`. Implemented continuous 60FPS inertial LERP physics interpolation (`currentFrameFloat += (targetFrameFloat - currentFrameFloat) * 0.14`) in `useScrollCanvas.js` for silky, butter-smooth video camera motion.
+
+### [2026-07-29 13:55]
+- **Activity**: Hero Overlay Brightness Adjusted in `ScrollHero.vue`.
+- **Details**: Adjusted `.hero-overlay` in `ScrollHero.vue` to restore 100% original bright, vibrant 4K video quality.

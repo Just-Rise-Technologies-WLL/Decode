@@ -91,7 +91,7 @@ const cardTranslateY = computed(() => {
   z-index: 1;
 }
 
-.hero-overlay {
+/* .hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -99,7 +99,7 @@ const cardTranslateY = computed(() => {
   height: 100%;
   background: linear-gradient(180deg, rgba(36, 34, 32, 0.25) 0%, rgba(36, 34, 32, 0.5) 100%);
   z-index: 2;
-}
+} */
 
 .hero-content-slider {
   position: relative;

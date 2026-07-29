@@ -14,3 +14,8 @@
   1. Disabled native image dragging with `draggable="false"`, `pointer-events: none;`, `user-select: none; -webkit-user-drag: none;` on slider images.
   2. Bound global `window.mousemove` and `window.mouseup` event handlers when drag initiates for seamless tracking across the entire screen.
   3. Generated matching Before (unpainted raw concrete living room) and After (rich warm terracotta painted living room) architectural room photos.
+
+### [2026-07-29 13:52]
+- **Issue**: Hero video frame canvas appeared dimmed/dull compared to the bright original 3D video.
+- **Root Cause**: `.hero-overlay` element in `ScrollHero.vue` was applying a global dark brown gradient (`rgba(36, 34, 32, 0.5)`).
+- **Fix Implemented**: Removed `.hero-overlay` dark tint in `ScrollHero.vue` to restore 100% original video brightness, color vibrancy, and clarity.

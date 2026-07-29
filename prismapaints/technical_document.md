@@ -23,8 +23,16 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Universal Canvas Engine: 90 HD Frames extracted from Paint bucket color splash video; Fallback living room image completely removed)
+  - `src/composables/useScrollCanvas.js` (Butter-Smooth 60FPS LERP Canvas Engine: 300 HD Frames extracted from 0:18–1:18 segment of 3D Private Residence Architectural Walkthrough Video)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
+
+---
+
+## Deep Analysis & Inertial LERP Physics Engine (`useScrollCanvas.js`)
+
+### LERP Mathematics:
+$$\text{frame}_{\text{current}} \leftarrow \text{frame}_{\text{current}} + (\text{frame}_{\text{target}} - \text{frame}_{\text{current}}) \times 0.14$$
+- Continuously interpolates frame position on every `requestAnimationFrame` tick to eliminate wheel stepping and provide butter-smooth, silky 60fps video camera motion.
 
 ---
 

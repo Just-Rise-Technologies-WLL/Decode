@@ -1,31 +1,29 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 /**
- * Universal Scroll Canvas Engine
- * Auto-detects in order:
- * 1. Image Sequence (/sequence/frame_0001.jpg .. frame_0090.jpg)
- * 2. MP4 Video File (/video/Paint_bucket_color_splash_reveal_202607290340.mp4)
- * 3. Luxury Interior Photo Scroll Reveal (Fallback)
+ * Universal Scroll Canvas Engine with Butter-Smooth Inertial LERP Physics
+ * Renders 300 HD Extracted Frames (/sequence/frame_0001.jpg .. frame_0300.jpg)
+ * from 0:18 to 1:18 segment of 3D Private Residence Architectural Walkthrough Video.
  */
 export function useScrollCanvas(canvasRef, containerRef, options = {}) {
-  const frameCount = options.frameCount || 90
+  const frameCount = options.frameCount || 300
   const imagePrefix = options.imagePrefix || '/sequence/frame_'
   const imageExt = options.imageExt || '.jpg'
 
   let ctx = null
-  let currentFrameIndex = 0
   const scrollProgress = ref(0)
 
-  // Modes
+  // Physics LERP State
+  let currentFrameFloat = 0
+  let targetFrameFloat = 0
+  let animFrameId = null
+
+  // Modes: 'sequence' | 'video'
   let mode = 'sequence'
   const loadedImages = []
   let videoElement = null
 
-  // Fallback high-res luxury interior image
-  const fallbackImage = new Image()
-  fallbackImage.src = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80'
-
-  // 1. Preload Image Sequence
+  // 1. Preload Image Sequence (300 HD Frames)
   const initSequence = () => {
     let loadedCount = 0
     for (let i = 1; i <= frameCount; i++) {
@@ -34,13 +32,13 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
       img.src = `${imagePrefix}${paddedNum}${imageExt}`
       img.onload = () => {
         loadedCount++
-        if (loadedCount > 5) {
+        if (loadedCount > 1 && animFrameId === null) {
           mode = 'sequence'
-          render()
+          startAnimationLoop()
         }
       }
       img.onerror = () => {
-        if (loadedCount < 5 && mode !== 'video') {
+        if (loadedCount < 2 && mode !== 'video') {
           initVideo()
         }
       }
@@ -51,23 +49,19 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   // 2. Try Video Detection Fallback
   const initVideo = () => {
     const video = document.createElement('video')
-    video.src = '/video/Paint_bucket_color_splash_reveal_202607290340.mp4'
+    video.src = '/video/Vrender Company - Private Residence Exterior _ Interior 4K 3D Animation Walkthrough Video - Vrender Architectural Rendering and 3D Animation (1080p, h264).mp4'
     video.preload = 'auto'
     video.muted = true
     video.playsInline = true
     video.oncanplaythrough = () => {
       videoElement = video
       mode = 'video'
-      render()
-    }
-    video.onerror = () => {
-      mode = 'photo'
-      render()
+      if (animFrameId === null) startAnimationLoop()
     }
   }
 
   // Draw image or video with aspect ratio 'cover'
-  const drawCoverMedia = (media, naturalWidth, naturalHeight, zoom = 1) => {
+  const drawCoverMedia = (media, naturalWidth, naturalHeight) => {
     if (!canvasRef.value) return
     const canvas = canvasRef.value
     const w = canvas.width
@@ -78,11 +72,11 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     let drawW, drawH, drawX, drawY
 
     if (canvasRatio > mediaRatio) {
-      drawW = w * zoom
-      drawH = (w / mediaRatio) * zoom
+      drawW = w
+      drawH = w / mediaRatio
     } else {
-      drawH = h * zoom
-      drawW = (h * mediaRatio) * zoom
+      drawH = h
+      drawW = h * mediaRatio
     }
 
     drawX = (w - drawW) / 2
@@ -91,56 +85,49 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     ctx.drawImage(media, drawX, drawY, drawW, drawH)
   }
 
-  // Render Engine
-  const render = () => {
-    if (!canvasRef.value) return
-    const canvas = canvasRef.value
-    if (!ctx) ctx = canvas.getContext('2d')
+  // Butter-Smooth Continuous RAF Loop with LERP Interpolation
+  const startAnimationLoop = () => {
+    const loop = () => {
+      if (!canvasRef.value) return
+      const canvas = canvasRef.value
+      if (!ctx) ctx = canvas.getContext('2d')
 
-    const w = canvas.width
-    const h = canvas.height
-    ctx.clearRect(0, 0, w, h)
+      const w = canvas.width
+      const h = canvas.height
 
-    // Mode 1: Image Sequence Scrubbing (90 Frames extracted from Paint bucket color splash video)
-    if (mode === 'sequence' && loadedImages[currentFrameIndex] && loadedImages[currentFrameIndex].complete && loadedImages[currentFrameIndex].naturalWidth !== 0) {
-      const img = loadedImages[currentFrameIndex]
-      drawCoverMedia(img, img.naturalWidth, img.naturalHeight)
-      return
-    }
+      // Continuous LERP Physics Interpolation for 60FPS Butter-Smooth Scrubbing
+      currentFrameFloat += (targetFrameFloat - currentFrameFloat) * 0.14
+      const renderIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrameFloat)))
 
-    // Mode 2: Video File Scrubbing
-    if (mode === 'video' && videoElement && videoElement.duration) {
-      videoElement.currentTime = scrollProgress.value * videoElement.duration
-      drawCoverMedia(videoElement, videoElement.videoWidth || w, videoElement.videoHeight || h)
-      return
-    }
-
-    // Mode 3: Luxury Interior Photo Scroll Reveal (Fallback)
-    if (fallbackImage.complete && fallbackImage.naturalWidth !== 0) {
-      const zoom = 1 + scrollProgress.value * 0.15
-      drawCoverMedia(fallbackImage, fallbackImage.naturalWidth, fallbackImage.naturalHeight, zoom)
-
-      const grad = ctx.createLinearGradient(0, 0, 0, h)
-      grad.addColorStop(0, 'rgba(36, 24, 22, 0.45)')
-      grad.addColorStop(0.5, 'rgba(36, 24, 22, 0.25)')
-      grad.addColorStop(1, 'rgba(36, 24, 22, 0.65)')
-      ctx.fillStyle = grad
+      ctx.fillStyle = '#242220'
       ctx.fillRect(0, 0, w, h)
-    } else {
-      ctx.fillStyle = '#2b1816'
-      ctx.fillRect(0, 0, w, h)
-    }
-  }
 
-  fallbackImage.onload = () => {
-    render()
+      // Mode 1: 300 HD Image Sequence Scrubbing with LERP
+      if (mode === 'sequence' && loadedImages[renderIndex] && loadedImages[renderIndex].complete && loadedImages[renderIndex].naturalWidth !== 0) {
+        const img = loadedImages[renderIndex]
+        drawCoverMedia(img, img.naturalWidth, img.naturalHeight)
+      } 
+      // Mode 2: Video File Scrubbing Fallback
+      else if (mode === 'video' && videoElement && videoElement.duration) {
+        videoElement.currentTime = 18.0 + (currentFrameFloat / frameCount) * 60.0
+        drawCoverMedia(videoElement, videoElement.videoWidth || w, videoElement.videoHeight || h)
+      } 
+      // Initial Frame 0 Base
+      else if (loadedImages[0] && loadedImages[0].complete && loadedImages[0].naturalWidth !== 0) {
+        const img = loadedImages[0]
+        drawCoverMedia(img, img.naturalWidth, img.naturalHeight)
+      }
+
+      animFrameId = requestAnimationFrame(loop)
+    }
+
+    animFrameId = requestAnimationFrame(loop)
   }
 
   const handleResize = () => {
     if (!canvasRef.value) return
     canvasRef.value.width = window.innerWidth
     canvasRef.value.height = window.innerHeight
-    render()
   }
 
   const handleScroll = () => {
@@ -149,9 +136,9 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     const totalHeight = containerRef.value.offsetHeight - window.innerHeight
     const scrolled = Math.max(0, -rect.top)
     scrollProgress.value = Math.min(1, Math.max(0, scrolled / totalHeight))
-    currentFrameIndex = Math.min(frameCount - 1, Math.floor(scrollProgress.value * frameCount))
 
-    requestAnimationFrame(render)
+    // Set high-precision target frame float for LERP engine
+    targetFrameFloat = scrollProgress.value * (frameCount - 1)
   }
 
   onMounted(() => {
@@ -162,12 +149,12 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   })
 
   onUnmounted(() => {
+    if (animFrameId !== null) cancelAnimationFrame(animFrameId)
     window.removeEventListener('resize', handleResize)
     window.removeEventListener('scroll', handleScroll)
   })
 
   return {
-    scrollProgress,
-    render
+    scrollProgress
   }
 }

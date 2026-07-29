@@ -23,6 +23,12 @@
 ### [2026-07-29 05:15]
 - **Activity**: Converted MP4 Video into 90 HD Frame Sequence & Connected to Canvas Hero.
 
-### [2026-07-29 05:46]
-- **Activity**: Designed Fallback Living Room Image Removal & Prisma Paints SVG Favicon Logo.
-- **Details**: Evaluated user screenshot showing Vercel living room image fallback. Designed complete removal of `fallbackImage` from `useScrollCanvas.js` to ensure only the paint bucket video sequence frames render. Designed new `public/favicon.svg` featuring the signature Prisma Paints triangle logo.
+### [2026-07-29 13:17]
+- **Activity**: Removed Fallback Living Room Image & Updated Favicon to Prisma Logo.
+
+### [2026-07-29 13:31]
+- **Activity**: Extracted 0:18 to 1:18 Time Segment of New Client 3D Walkthrough Video into 120 HD Frames & Connected to Hero Canvas.
+
+### [2026-07-29 13:43]
+- **Activity**: Extracted 300 HD Frame Sequence & Implemented Inertial LERP Physics Engine in `useScrollCanvas.js`.
+- **Details**: Extracted 300 high-density HD frames from 0:18 to 1:18 segment of `Vrender Company - Private Residence Exterior _ Interior 4K 3D Animation Walkthrough Video` into `public/sequence/frame_0001.jpg` .. `frame_0300.jpg`. Implemented continuous 60FPS inertial LERP physics interpolation (`currentFrameFloat += (targetFrameFloat - currentFrameFloat) * 0.14`) in `useScrollCanvas.js` for silky, butter-smooth video camera motion.

@@ -1,7 +1,9 @@
 <template>
   <section id="wall-animation" ref="containerRef" class="wall-scroll-container">
     <div class="wall-pinned-wrapper">
-      <canvas ref="canvasRef" class="wall-canvas"></canvas>
+      <div class="wall-boxed-card">
+        <canvas ref="canvasRef" class="wall-canvas"></canvas>
+      </div>
 
       <!-- Scroll Mouse Indicator -->
       <div 
@@ -42,73 +44,39 @@ const { scrollProgress } = useWallCanvas(canvasRef, containerRef)
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.wall-boxed-card {
+  position: relative;
+  width: 100%;
+  max-width: 1360px;
+  height: calc(100vh - 120px);
+  max-height: 860px;
+  min-height: 480px;
+  background: rgba(20, 18, 16, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wall-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
-
-.wall-content-wrapper {
-  position: relative;
-  z-index: 10;
-  width: 90%;
-  max-width: 1240px;
-  margin: 0 auto;
-  color: #ffffff;
-}
-
-.wall-card {
-  background: rgba(36, 34, 32, 0.82);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 28px;
-  padding: 56px 48px;
-  max-width: 600px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.wall-tag {
-  font-size: 0.82rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--clr-accent-gold);
-  margin-bottom: 14px;
-  font-weight: 600;
+  object-fit: contain;
   display: block;
-}
-
-.wall-title {
-  font-size: 2.8rem;
-  margin-bottom: 18px;
-  line-height: 1.12;
-  color: #ffffff;
-}
-
-.wall-desc {
-  font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 32px;
-  font-weight: 300;
-  line-height: 1.6;
-}
-
-.wall-actions {
-  display: flex;
-  gap: 16px;
-  align-items: center;
 }
 
 .scroll-indicator {
   position: absolute;
-  bottom: 40px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -121,6 +89,7 @@ const { scrollProgress } = useWallCanvas(canvasRef, containerRef)
   letter-spacing: 2px;
   text-transform: uppercase;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .scroll-mouse {
@@ -148,12 +117,13 @@ const { scrollProgress } = useWallCanvas(canvasRef, containerRef)
   100% { opacity: 0; top: 22px; }
 }
 
-@media (max-width: 640px) {
-  .wall-card {
-    padding: 40px 28px;
+@media (max-width: 768px) {
+  .wall-pinned-wrapper {
+    padding: 16px 12px;
   }
-  .wall-title {
-    font-size: 2.2rem;
+  .wall-boxed-card {
+    height: calc(100vh - 80px);
+    border-radius: 20px;
   }
 }
 </style>

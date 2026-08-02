@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 12:26]
-- **Activity**: Created 1200x630 OpenGraph Luxury Banner & Added Social Link Preview Tags to `index.html`.
-- **Details**: Generated `public/images/og_share_preview.png` (1200x630 dark luxury banner with architectural room photo and white Prisma logo). Added `og:image`, `og:title`, `og:description`, and `twitter:card="summary_large_image"` to `index.html`. Link shares on WhatsApp, LinkedIn, iMessage, and Facebook now display a full-width 5-star luxury brand banner.
+### [2026-08-03 02:06]
+- **Activity**: Rearranged Signature Color Shades Order in Color Studio.
+- **Details**: Updated `FIVE_SIGNATURE_SHADES` in `src/data/colorCatalog.js` to the exact order requested by user: **Alabaster White**, **Emerald Green**, **Mediterranean Blue**, **Imperial Red**, and **Deep Maroon**. Swatches in Color Studio & Room Visualizer now display in this exact sequence.
 

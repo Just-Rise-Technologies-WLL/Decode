@@ -53,21 +53,21 @@ export function useWallCanvas(canvasRef, containerRef) {
     ctx.scale(dpr, dpr)
     ctx.clearRect(0, 0, rect.width, rect.height)
 
-    // Cover aspect ratio draw
+    // Contain aspect ratio draw so full frame fits inside canvas without cropping top/bottom details
     const imgRatio = img.width / img.height
     const canvasRatio = rect.width / rect.height
     let drawW, drawH, drawX, drawY
 
     if (canvasRatio > imgRatio) {
-      drawW = rect.width
-      drawH = rect.width / imgRatio
-      drawX = 0
-      drawY = (rect.height - drawH) / 2
-    } else {
       drawH = rect.height
       drawW = rect.height * imgRatio
       drawX = (rect.width - drawW) / 2
       drawY = 0
+    } else {
+      drawW = rect.width
+      drawH = rect.width / imgRatio
+      drawX = 0
+      drawY = (rect.height - drawH) / 2
     }
 
     ctx.drawImage(img, drawX, drawY, drawW, drawH)

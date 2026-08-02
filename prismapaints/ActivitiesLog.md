@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 12:19]
-- **Activity**: Removed All Text Drop-Shadow Rules for Crisp Flat Typography.
-- **Details**: Updated `ScrollHero.vue` to remove all `text-shadow` properties from `.hero-subtitle`, `.hero-title`, and `.hero-desc`. Typography is now 100% flat, crisp, and sharp with zero drop-shadow rings or fuzzy outlines behind the letters.
+### [2026-08-02 12:26]
+- **Activity**: Created 1200x630 OpenGraph Luxury Banner & Added Social Link Preview Tags to `index.html`.
+- **Details**: Generated `public/images/og_share_preview.png` (1200x630 dark luxury banner with architectural room photo and white Prisma logo). Added `og:image`, `og:title`, `og:description`, and `twitter:card="summary_large_image"` to `index.html`. Link shares on WhatsApp, LinkedIn, iMessage, and Facebook now display a full-width 5-star luxury brand banner.
 

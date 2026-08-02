@@ -23,6 +23,7 @@
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Pinned Side-Scroll with 9 Finish Categories, dynamic scroll width calculation, and 100% full view end spacer)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Stacked Morph-Dissolve 5-Color Room Visualizer rendering `/intractive_panel/WhiteWall.png`, `RedWall.png`, `MaroonWall.png`, `GreenWall.png`, `BlueWall.png`), `SwatchGrid.vue`
   - `src/components/projects/ProjectsGrid.vue` (Interactive Before/After Project Cards)
+  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, percentage loading bar, and video-loaded fade-out transition)
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:

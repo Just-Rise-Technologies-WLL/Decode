@@ -1,10 +1,13 @@
 <template>
   <div id="app-root">
+    <!-- Full-Screen Luxury Preloader -->
+    <LoadingScreen :is-loading="isSiteLoading" />
+
     <!-- Header Navigation -->
     <Navbar @open-modal="openModal" />
 
     <!-- Hero Scroll-Driven Animation Section -->
-    <ScrollHero @open-modal="openModal" />
+    <ScrollHero @open-modal="openModal" @video-loaded="dismissPreloader" />
 
     <!-- About Us & Interactive Product Showcase Section -->
     <AboutProductsSection @open-modal="openModal" />
@@ -57,6 +60,8 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import LoadingScreen from './components/common/LoadingScreen.vue'
 import Navbar from './components/layout/Navbar.vue'
 import ScrollHero from './components/hero/ScrollHero.vue'
 import AboutProductsSection from './components/about/AboutProductsSection.vue'
@@ -70,6 +75,23 @@ import SampleModal from './components/common/SampleModal.vue'
 import ToastNotification from './components/common/ToastNotification.vue'
 
 import { useColorStudio } from './composables/useColorStudio.js'
+
+const isSiteLoading = ref(true)
+
+const dismissPreloader = () => {
+  if (isSiteLoading.value) {
+    setTimeout(() => {
+      isSiteLoading.value = false
+    }, 400)
+  }
+}
+
+onMounted(() => {
+  // Safety fallback: dismiss preloader after 2.2 seconds max
+  setTimeout(() => {
+    dismissPreloader()
+  }, 2200)
+})
 
 const {
   surfaces,

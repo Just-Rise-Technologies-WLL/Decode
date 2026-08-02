@@ -7,6 +7,8 @@
       muted 
       playsinline 
       class="hero-bg-video"
+      @loadeddata="$emit('video-loaded')"
+      @canplaythrough="$emit('video-loaded')"
     >
       <source 
         :src="heroVideoUrl" 
@@ -49,7 +51,7 @@
 <script setup>
 import heroVideoUrl from '/video/hero_compressed.mp4?url'
 
-defineEmits(['open-modal'])
+defineEmits(['open-modal', 'video-loaded'])
 </script>
 
 <style scoped>

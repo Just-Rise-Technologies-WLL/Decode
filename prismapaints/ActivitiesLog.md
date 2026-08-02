@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 11:53]
-- **Activity**: Re-encoded Hero Video with Native H.264 (AVC1) HTML5 Codec.
-- **Details**: Re-encoded the Hero video into a native H.264 (`avc1`) 16.5 MB MP4 file (`/video/hero_compressed.mp4`), achieving an **82% file size reduction** from 92.3 MB with 100% native HTML5 playback support in Chrome, Safari, Firefox, and Edge.
+### [2026-08-02 12:00]
+- **Activity**: Built & Integrated Full-Screen Luxury Brand Preloader Screen.
+- **Details**: Created `LoadingScreen.vue` and integrated it in `App.vue`. Features a dark luxury background (`#181614`), animated gold Prisma Paints logo pulse, and progress bar with `@video-loaded` event detection and smooth 0.65s fade-out transition.
 

@@ -10,6 +10,7 @@
 ## Technical Stack & Dependencies
 - **Build System**: Vite 5+ (`vite.config.js`)
 - **Framework**: Vue 3 (Composition API with `<script setup>`)
+- **Social Link Previews**: OpenGraph (`og:image`, `og:title`, `og:description`) and Twitter Card (`twitter:card`) meta tags in `index.html` referencing 1200x630 dark luxury banner `public/images/og_share_preview.png` for WhatsApp, iMessage, LinkedIn, and Facebook link preview cards.
 - **Git Config**: [.gitignore](file:///Volumes/Files/AppDev/justrise_bahrain/Decode/prismapaints/.gitignore)
 - **Favicon**: `public/favicon.svg` (Prisma Paints Signature Multi-color Triangle Logo)
 - **Modular Components**:

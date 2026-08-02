@@ -13,9 +13,9 @@
 - **Git Config**: [.gitignore](file:///Volumes/Files/AppDev/justrise_bahrain/Decode/prismapaints/.gitignore)
 - **Favicon**: `public/favicon.svg` (Prisma Paints Signature Multi-color Triangle Logo)
 - **Modular Components**:
-  - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar)
+  - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (Hardware-Accelerated 60FPS Full-Screen Background Video using `/video/Herosection VIdeo.MOV`)
+  - `src/components/hero/ScrollHero.vue` (Hardware-Accelerated 60FPS Full-Screen Background Video using `/video/Herosection VIdeo.mov` with Light Frosted Crystal Glass card and dark luxury typography)
   - `src/components/wall/WallSectionAnimation.vue` (100% Full-View Unblocked Interactive 300vh Scroll-Driven Frame Canvas Section rendering 240 HD frames extracted from `/video/Wall Section Video.mp4`)
   - `src/components/about/AboutProductsSection.vue` (Unified About Us section + Signature Products showcase with 60fps Photo-Real parabolic arc flight engine matching Green and Blue photo cans 100% in handles, metallic rims, and lighting)
   - `src/components/about/ThreeDCanCanvas.vue` (Real Three.js WebGL 3D Cylinder Paint Can Mesh with studio lighting, gold metallic rim, and 360° scroll-driven 3D cylinder rotation)

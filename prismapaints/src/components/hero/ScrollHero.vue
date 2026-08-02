@@ -31,7 +31,9 @@
         </p>
         <div style="display: flex; gap: 16px;">
           <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
-          <a href="#about" class="btn-outline" style="border-color: #ffffff; color: #ffffff;">About Prisma</a>
+        <div style="display: flex; gap: 16px;">
+          <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
+          <a href="#about" class="btn-outline" style="border-color: #1a1816; color: #1a1816;">About Prisma</a>
         </div>
       </div>
     </div>
@@ -76,7 +78,7 @@ defineEmits(['open-modal'])
 .hero-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 100%);
+  background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.15) 100%);
   z-index: 2;
   pointer-events: none;
 }
@@ -87,18 +89,18 @@ defineEmits(['open-modal'])
   width: 90%;
   max-width: 1240px;
   margin: 0 auto;
-  color: #ffffff;
+  color: #1a1816;
 }
 
 .hero-card {
-  background: rgba(36, 34, 32, 0.78);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.22) 100%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 28px;
   padding: 60px 48px;
   max-width: 580px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 25px 60px rgba(0, 0, 0, 0.15);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -106,9 +108,9 @@ defineEmits(['open-modal'])
   font-size: 0.85rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--clr-accent-gold);
+  color: #7C3B29;
   margin-bottom: 14px;
-  font-weight: 600;
+  font-weight: 700;
   display: block;
 }
 
@@ -116,14 +118,14 @@ defineEmits(['open-modal'])
   font-size: 3.5rem;
   margin-bottom: 20px;
   line-height: 1.08;
-  color: #ffffff;
+  color: #1a1816;
 }
 
 .hero-desc {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.92);
+  color: #2d2824;
   margin-bottom: 30px;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .scroll-indicator {

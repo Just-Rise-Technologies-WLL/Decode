@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 11:00]
-- **Activity**: Built Stacked Morph-Dissolve Transition Engine for Room Visualizer.
-- **Details**: Updated `RoomVisualizer.vue` with stacked image layers (`previousImage` + `currentImage`) and a micro-scale morph-dissolve keyframe animation (`morphDissolve`). Switching colors now smoothly morphs Color A directly into Color B with zero blank flickers.
+### [2026-08-02 11:23]
+- **Activity**: Redesigned Hero Card & Navbar with Light Frosted Crystal Glassmorphism.
+- **Details**: Updated `ScrollHero.vue` and `Navbar.vue` to use a light frosted glass linear gradient (`background: linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.22) 100%)`), high saturation blur (`backdrop-filter: blur(28px) saturate(180%)`), inner glass bevel shadow, and dark luxury charcoal typography for high legibility and real frosted crystal glass optics.
 

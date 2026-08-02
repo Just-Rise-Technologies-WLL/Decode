@@ -2,53 +2,24 @@
   <section id="studio" class="color-studio-section">
     <div class="container">
       <div class="section-header">
-        <span class="section-subtitle">COLOR STUDIO</span>
-        <h2 class="section-title">Find the exact finish & shade</h2>
-        <p class="section-desc">Pick a color, choose a surface, dial in the sheen. Save your shortlist and request free physical samples.</p>
+        <span class="section-subtitle">REAL COLOR VISUALIZER</span>
+        <h2 class="section-title">Select shade swatch to paint room wall</h2>
+        <p class="section-desc">Pick any of our 5 signature shades below to preview the real paint finish on the architectural wall in real time.</p>
       </div>
 
       <div class="studio-grid">
-        <!-- Room Visualizer -->
+        <!-- Room Visualizer with Wall Paint Blend Engine & Photo Frame -->
         <RoomVisualizer 
           :color="selectedColor" 
-          :finish="activeFinish"
           @copy-hex="copyHex" 
         />
 
-        <!-- Streamlined Controls Panel -->
+        <!-- Streamlined Controls Panel (Only 5 Color Swatches + Palette Shortlist) -->
         <div class="studio-controls-panel">
           
-          <!-- 1. Surface Selection -->
+          <!-- SELECT SHADE SWATCH (5 Curated Colors) -->
           <div>
-            <div class="control-group-title">1. CHOOSE SURFACE</div>
-            <div class="options-row">
-              <button 
-                v-for="s in surfaces" 
-                :key="s" 
-                :class="['chip-btn', { active: activeSurface === s }]"
-                @click="$emit('update:activeSurface', s)">
-                {{ s }}
-              </button>
-            </div>
-          </div>
-
-          <!-- 2. Finish Selection -->
-          <div>
-            <div class="control-group-title">2. SELECT FINISH / SHEEN</div>
-            <div class="options-row">
-              <button 
-                v-for="f in finishes" 
-                :key="f" 
-                :class="['chip-btn', { active: activeFinish === f }]"
-                @click="$emit('update:activeFinish', f)">
-                {{ f }}
-              </button>
-            </div>
-          </div>
-
-          <!-- 3. Color Family Swatches -->
-          <div>
-            <div class="control-group-title">3. SELECT SHADE SWATCH</div>
+            <div class="control-group-title">SELECT SHADE SWATCH</div>
             <SwatchGrid 
               :colors="filteredColors" 
               :selected-id="selectedColor.id" 
@@ -56,11 +27,11 @@
             />
           </div>
 
-          <!-- Compact Palette Shortlist -->
+          <!-- Palette Shortlist Card -->
           <div class="palette-shortlist-card">
             <div class="palette-header">
               <span class="shortlist-title">MY PALETTE SHORTLIST</span>
-              <span class="palette-count">{{ myPalette.length }} / 8 Shades</span>
+              <span class="palette-count">{{ myPalette.length }} / 5 Shades</span>
             </div>
 
             <div class="palette-swatches-list">
@@ -101,12 +72,6 @@ import RoomVisualizer from './RoomVisualizer.vue'
 import SwatchGrid from './SwatchGrid.vue'
 
 defineProps({
-  surfaces: Array,
-  finishes: Array,
-  families: Array,
-  activeSurface: String,
-  activeFinish: String,
-  activeFamily: String,
   selectedColor: Object,
   myPalette: Array,
   filteredColors: Array,
@@ -114,9 +79,6 @@ defineProps({
 })
 
 defineEmits([
-  'update:activeSurface',
-  'update:activeFinish',
-  'update:activeFamily',
   'select-color', 
   'toggle-palette', 
   'copy-hex', 
@@ -151,46 +113,23 @@ defineEmits([
 .studio-controls-panel {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
 }
 
 .control-group-title {
-  font-size: 0.72rem;
-  letter-spacing: 2px;
+  font-size: 0.78rem;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--clr-accent-gold);
   font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.options-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip-btn {
-  padding: 7px 16px;
-  border-radius: 30px;
-  font-size: 0.82rem;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--clr-border-dark);
-  color: var(--clr-text-light);
-  transition: var(--transition-smooth);
-}
-
-.chip-btn:hover,
-.chip-btn.active {
-  background: var(--clr-primary);
-  border-color: var(--clr-primary);
-  color: #ffffff;
+  margin-bottom: 14px;
 }
 
 .palette-shortlist-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px dashed var(--clr-border-dark);
-  border-radius: 16px;
-  padding: 18px;
+  border-radius: 20px;
+  padding: 22px;
   margin-top: 6px;
 }
 
@@ -198,7 +137,7 @@ defineEmits([
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .shortlist-title {
@@ -222,10 +161,10 @@ defineEmits([
 }
 
 .mini-swatch {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.4);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -242,7 +181,7 @@ defineEmits([
 .action-btn-row {
   display: flex;
   gap: 12px;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
 @media (max-width: 1024px) {

@@ -1,87 +1,69 @@
 <template>
-  <section ref="containerRef" class="hero-scroll-container">
-    <div class="hero-pinned-wrapper">
-      <canvas ref="canvasRef" class="hero-canvas"></canvas>
-      <div class="hero-overlay"></div>
+  <section class="hero-video-container">
+    <!-- Native Hardware-Accelerated 60FPS Video -->
+    <video 
+      autoplay 
+      loop 
+      muted 
+      playsinline 
+      class="hero-bg-video"
+    >
+      <source 
+        :src="heroVideoUrl" 
+        type="video/quicktime" 
+      />
+      <source 
+        :src="heroVideoUrl" 
+        type="video/mp4" 
+      />
+    </video>
 
-      <div class="hero-content-slider">
-        <!-- Text Card Container - Delayed Reveal (Appears smoothly after 40% scroll) -->
-        <div 
-          class="hero-card"
-          :style="{
-            opacity: cardOpacity,
-            transform: `translateY(${cardTranslateY}px)`,
-            pointerEvents: cardOpacity > 0.3 ? 'auto' : 'none'
-          }">
-          <span class="hero-subtitle">INSPIRED INTERIOR SHADES</span>
-          <h1 class="hero-title">Warmth and comfort combined</h1>
-          <p class="hero-desc">Bring a natural, grounding energy to your home with our earth-toned luxury collection, designed to create inviting, welcoming spaces.</p>
-          <div style="display: flex; gap: 16px;">
-            <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
-            <a href="#studio" class="btn-outline" style="border-color: #ffffff; color: #ffffff;">Color Studio</a>
-          </div>
+    <!-- Subtle Vignette Dark Gradient -->
+    <div class="hero-vignette"></div>
+
+    <!-- Floating Glassmorphism Content Card -->
+    <div class="hero-content">
+      <div class="hero-card">
+        <span class="hero-subtitle">INSPIRED INTERIOR SHADES</span>
+        <h1 class="hero-title">Warmth and comfort combined</h1>
+        <p class="hero-desc">
+          Bring a natural, grounding energy to your home with our earth-toned luxury collection, designed to create inviting, welcoming spaces.
+        </p>
+        <div style="display: flex; gap: 16px;">
+          <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
+          <a href="#about" class="btn-outline" style="border-color: #ffffff; color: #ffffff;">About Prisma</a>
         </div>
       </div>
+    </div>
 
-      <!-- Scroll Mouse Indicator (Fades out as user scrolls down) -->
-      <div 
-        class="scroll-indicator"
-        :style="{ opacity: Math.max(0, 0.8 - scrollProgress * 2.5) }">
-        <div class="scroll-mouse">
-          <div class="scroll-wheel"></div>
-        </div>
-        <span>Scroll to Experience</span>
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      <div class="scroll-mouse">
+        <div class="scroll-wheel"></div>
       </div>
+      <span>Scroll to Discover</span>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useScrollCanvas } from '../../composables/useScrollCanvas.js'
+import heroVideoUrl from '/video/Herosection VIdeo.mov?url'
 
 defineEmits(['open-modal'])
-
-const canvasRef = ref(null)
-const containerRef = ref(null)
-
-const { scrollProgress } = useScrollCanvas(canvasRef, containerRef)
-
-// Delayed Opacity Interpolation: 0 until 40% scroll -> 1.0 by 78% scroll
-const cardOpacity = computed(() => {
-  const p = scrollProgress.value
-  if (p <= 0.40) return 0
-  if (p >= 0.78) return 1
-  return (p - 0.40) / (0.78 - 0.40)
-})
-
-// Delayed Slide-Up Interpolation: translateY 50px -> 0px
-const cardTranslateY = computed(() => {
-  const p = scrollProgress.value
-  if (p <= 0.40) return 50
-  if (p >= 0.78) return 0
-  return 50 * (1 - (p - 0.40) / (0.78 - 0.40))
-})
 </script>
 
 <style scoped>
-.hero-scroll-container {
+.hero-video-container {
   position: relative;
-  height: 320vh;
-}
-
-.hero-pinned-wrapper {
-  position: sticky;
-  top: 0;
-  height: 100vh;
   width: 100%;
+  height: 100vh;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hero-canvas {
+.hero-bg-video {
   position: absolute;
   top: 0;
   left: 0;
@@ -91,21 +73,19 @@ const cardTranslateY = computed(() => {
   z-index: 1;
 }
 
-/* .hero-overlay {
+.hero-vignette {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(36, 34, 32, 0.25) 0%, rgba(36, 34, 32, 0.5) 100%);
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 100%);
   z-index: 2;
-} */
+  pointer-events: none;
+}
 
-.hero-content-slider {
+.hero-content {
   position: relative;
   z-index: 10;
   width: 90%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   color: #ffffff;
 }
@@ -119,8 +99,7 @@ const cardTranslateY = computed(() => {
   padding: 60px 48px;
   max-width: 580px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  will-change: transform, opacity;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .hero-subtitle {

@@ -8,6 +8,7 @@
 
       <!-- Desktop Navigation Links -->
       <div class="nav-links-desktop">
+        <a href="#about" class="nav-link">ABOUT US</a>
         <a href="#architectural" class="nav-link">ARCHITECTURAL</a>
         <a href="#industrial" class="nav-link">INDUSTRIAL</a>
         <a href="#studio" class="nav-link">COLOR STUDIO</a>

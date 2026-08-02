@@ -36,6 +36,13 @@
 - **Activity**: Removed Text from Footer Logo.
 - **Details**: Removed `PRISMA PAINTS` text span from `Footer.vue` to keep only the clean logo image in the footer brand section.
 
+### [2026-08-02 02:20]
+- **Activity**: Added 2-Column About Us Section to Home Page.
+- **Details**: Created `src/components/about/AboutSection.vue` featuring a 2-column layout (Text column with brand story, heritage, key stats & CTA + Image column showcasing `/products/red.png`). Integrated `<AboutSection id="about" />` into `App.vue` directly following the Hero section and added an `#about` link in `Navbar.vue`.
 
-
+### [2026-08-02 02:24]
+- **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
+### [2026-08-02 11:00]
+- **Activity**: Built Stacked Morph-Dissolve Transition Engine for Room Visualizer.
+- **Details**: Updated `RoomVisualizer.vue` with stacked image layers (`previousImage` + `currentImage`) and a micro-scale morph-dissolve keyframe animation (`morphDissolve`). Switching colors now smoothly morphs Color A directly into Color B with zero blank flickers.
 

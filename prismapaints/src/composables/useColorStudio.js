@@ -1,22 +1,13 @@
 import { ref, computed } from 'vue'
-import { COLOR_CATALOG, SURFACES, FINISHES, COLOR_FAMILIES } from '../data/colorCatalog.js'
+import { FIVE_SIGNATURE_SHADES } from '../data/colorCatalog.js'
 
 export function useColorStudio() {
-  const activeSurface = ref('Wall')
-  const activeFinish = ref('Matte')
-  const activeFamily = ref('All')
-  const selectedColor = ref(COLOR_CATALOG[1]) // Default Warm Terracotta
+  const selectedColor = ref(FIVE_SIGNATURE_SHADES[0]) // Default Warm Terracotta
   const myPalette = ref([])
   const toastMessage = ref('')
   const isModalOpen = ref(false)
 
-  const filteredColors = computed(() => {
-    return COLOR_CATALOG.filter(c => {
-      const matchesFamily = activeFamily.value === 'All' || c.family === activeFamily.value
-      const matchesSurface = c.surfaces.includes(activeSurface.value)
-      return matchesFamily && matchesSurface
-    })
-  })
+  const filteredColors = computed(() => FIVE_SIGNATURE_SHADES)
 
   const selectColor = (color) => {
     selectedColor.value = color
@@ -28,8 +19,8 @@ export function useColorStudio() {
       myPalette.value.splice(idx, 1)
       showToast(`Removed "${color.name}" from palette.`)
     } else {
-      if (myPalette.value.length >= 8) {
-        showToast('Palette shortlist full (Max 8 colors).')
+      if (myPalette.value.length >= 5) {
+        showToast('Palette shortlist full (Max 5 colors).')
         return
       }
       myPalette.value.push(color)
@@ -63,12 +54,6 @@ export function useColorStudio() {
   }
 
   return {
-    surfaces: SURFACES,
-    finishes: FINISHES,
-    families: COLOR_FAMILIES,
-    activeSurface,
-    activeFinish,
-    activeFamily,
     selectedColor,
     myPalette,
     toastMessage,

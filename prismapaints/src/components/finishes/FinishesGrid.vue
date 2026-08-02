@@ -37,13 +37,15 @@
             </div>
           </div>
 
-        </div>
+        <!-- End track spacer for comfortable 100% full view landing -->
+        <div class="track-end-spacer"></div>
       </div>
-
     </div>
-  </div>
 
-  <!-- Split Feature Highlight Banner with Before/After Slider -->
+  </div>
+</div>
+
+<!-- Split Feature Highlight Banner with Before/After Slider -->
   <section class="feature-split-section">
     <div class="feature-split-content">
       <span class="section-subtitle" style="color: var(--clr-accent-gold);">INSPIRED INTERIOR SHADES</span>
@@ -75,6 +77,7 @@ defineEmits(['open-modal'])
 const trackContainerRef = ref(null)
 const trackInnerRef = ref(null)
 const translateXPercentage = ref(0)
+const maxTranslatePercentage = ref(78)
 
 const finishItems = [
   {
@@ -118,45 +121,79 @@ const finishItems = [
     title: 'Architectural Textures',
     desc: 'Tactile sand, stone, and plaster effects bringing rich depth to signature feature walls.',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 7,
+    category: 'WOOD FINISHES',
+    title: 'Wood & Timber Stains',
+    desc: 'Polyurethane lacquers, protective varnishes, and rich teak stains for natural timber.',
+    image: 'https://images.unsplash.com/photo-1546484475-7f7bd55792da?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 8,
+    category: 'FLOOR COATINGS',
+    title: 'Epoxy Floor Systems',
+    desc: 'Seamless, high-friction epoxy floor systems for commercial showrooms & garages.',
+    image: 'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 9,
+    category: 'PROTECTIVE COATINGS',
+    title: 'Waterproofing & Thermal',
+    desc: 'Elastomeric waterproofing membranes and heat-reflective roof barrier coatings.',
+    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80'
   }
 ]
 
+const updateMaxScroll = () => {
+  if (!trackInnerRef.value) return
+  const innerW = trackInnerRef.value.scrollWidth
+  const windowW = window.innerWidth
+  const maxPixels = Math.max(0, innerW - (windowW * 0.72))
+  maxTranslatePercentage.value = (maxPixels / innerW) * 100
+}
+
 const handleScroll = () => {
   if (!trackContainerRef.value) return
+  updateMaxScroll()
   const rect = trackContainerRef.value.getBoundingClientRect()
   const totalScrollableHeight = trackContainerRef.value.offsetHeight - window.innerHeight
+  const maxPct = maxTranslatePercentage.value
   
   if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
     const progress = Math.abs(rect.top) / totalScrollableHeight
-    translateXPercentage.value = Math.min(65, Math.max(0, progress * 65))
+    translateXPercentage.value = Math.min(maxPct, Math.max(0, progress * maxPct))
   } else if (rect.top > 0) {
     translateXPercentage.value = 0
   } else if (rect.bottom < window.innerHeight) {
-    translateXPercentage.value = 65
+    translateXPercentage.value = maxPct
   }
 }
 
 const slideLeft = () => {
-  translateXPercentage.value = Math.max(0, translateXPercentage.value - 22)
+  translateXPercentage.value = Math.max(0, translateXPercentage.value - 15)
 }
 
 const slideRight = () => {
-  translateXPercentage.value = Math.min(65, translateXPercentage.value + 22)
+  translateXPercentage.value = Math.min(maxTranslatePercentage.value, translateXPercentage.value + 15)
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  updateMaxScroll()
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('resize', handleScroll, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', handleScroll)
 })
 </script>
 
 <style scoped>
 /* Outer container provides scroll height */
 .finishes-side-scroll-container {
-  height: 240vh;
+  height: 320vh;
   position: relative;
   background-color: var(--clr-bg-light);
 }
@@ -241,6 +278,11 @@ onUnmounted(() => {
 .finish-card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-hover);
+}
+
+.track-end-spacer {
+  flex: 0 0 120px;
+  height: 100%;
 }
 
 .finish-card img {

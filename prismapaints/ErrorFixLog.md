@@ -15,7 +15,9 @@
   2. Bound global `window.mousemove` and `window.mouseup` event handlers when drag initiates for seamless tracking across the entire screen.
   3. Generated matching Before (unpainted raw concrete living room) and After (rich warm terracotta painted living room) architectural room photos.
 
-### [2026-07-29 13:52]
-- **Issue**: Hero video frame canvas appeared dimmed/dull compared to the bright original 3D video.
-- **Root Cause**: `.hero-overlay` element in `ScrollHero.vue` was applying a global dark brown gradient (`rgba(36, 34, 32, 0.5)`).
-- **Fix Implemented**: Removed `.hero-overlay` dark tint in `ScrollHero.vue` to restore 100% original video brightness, color vibrancy, and clarity.
+### [2026-08-02 10:22]
+- **Issue**: Photo frame image in `RoomVisualizer.vue` failed to load over network, rendering a white blank box with broken alt text.
+- **Root Cause**: External Unsplash network URL failed to fetch in the user's browser.
+- **Fix Implemented**: Replaced external image URL with an embedded vector gallery artwork inside `.photo-frame-mat` (0 network dependencies, 100% reliable instant load) and upgraded wall paint blend mode to dual-layer (`color` + `multiply`) for vibrant paint hues.
+
+

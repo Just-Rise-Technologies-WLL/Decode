@@ -5,6 +5,7 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  assetsInclude: ['**/*.MOV', '**/*.mov'],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')

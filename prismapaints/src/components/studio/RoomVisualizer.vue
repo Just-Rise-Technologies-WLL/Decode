@@ -1,34 +1,31 @@
 <template>
   <div class="studio-preview-box">
-    <!-- Realistic Room Photo Visualizer with Blend-Mode Paint Overlay -->
+    <!-- Photorealistic Room Visualizer with Stacked Morph-Dissolve Engine -->
     <div class="room-visualizer-container">
       
-      <!-- Base Architectural Room Photo (Lighting, Shadows & Furniture) -->
+      <!-- Previous Background Image (Pinned underneath during morph) -->
       <img 
-        src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80" 
-        alt="Room Wall Visualizer" 
-        class="room-base-img">
+        v-if="previousImage"
+        :src="previousImage" 
+        alt="Previous Wall Visualizer" 
+        class="room-photo photo-bg">
 
-      <!-- Dynamic Paint Tint Layer (Mix-Blend-Mode Multiply) -->
-      <div 
-        class="wall-paint-overlay"
-        :style="{ 
-          backgroundColor: color.hex,
-          opacity: sheenOpacity
-        }">
-      </div>
+      <!-- Active Foreground Image (Morphs & dissolves smoothly over previous image) -->
+      <img 
+        :key="color.id"
+        :src="color.image" 
+        :alt="color.name + ' Wall Visualizer'" 
+        class="room-photo photo-fg"
+        :class="{ 'morphing': isMorphing }">
 
-      <!-- Surface Texture & Highlight Overlay Layer -->
+      <!-- Surface Lighting & Highlight Overlay Layer -->
       <div class="room-highlight-layer"></div>
-
-      <!-- Sheen Finish Badge Floating Tag -->
-      <span class="finish-badge-tag">{{ finish }} Finish</span>
     </div>
 
-    <!-- Active Color Details Bar -->
+    <!-- Active Selected Color Meta Details -->
     <div class="active-color-meta">
       <div>
-        <span class="meta-label">SELECTED COLOR</span>
+        <span class="meta-label">SELECTED SHADE</span>
         <h3 class="color-title">{{ color.name }}</h3>
         <p class="color-desc">{{ color.desc }}</p>
       </div>
@@ -42,23 +39,25 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
-  color: { type: Object, required: true },
-  finish: { type: String, default: 'Matte' }
+  color: { type: Object, required: true }
 })
 
 defineEmits(['copy-hex'])
 
-const sheenOpacity = computed(() => {
-  switch (props.finish) {
-    case 'Matte': return 0.82
-    case 'Eggshell': return 0.78
-    case 'Satin': return 0.75
-    case 'Semi-Gloss': return 0.70
-    case 'Textured': return 0.85
-    default: return 0.80
+const previousImage = ref(null)
+const isMorphing = ref(false)
+
+watch(() => props.color, (newColor, oldColor) => {
+  if (oldColor && oldColor.image && oldColor.image !== newColor.image) {
+    previousImage.value = oldColor.image
+    isMorphing.value = true
+    
+    setTimeout(() => {
+      isMorphing.value = false
+    }, 450)
   }
 })
 </script>
@@ -74,52 +73,57 @@ const sheenOpacity = computed(() => {
 
 .room-visualizer-container {
   width: 100%;
-  height: 380px;
-  border-radius: 16px;
+  height: 440px;
+  border-radius: 18px;
   position: relative;
   overflow: hidden;
   box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
   background-color: #1a1615;
 }
 
-.room-base-img {
+.room-photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-/* Dynamic Paint Layer using Multiply Blend Mode for realistic lighting & shadows */
-.wall-paint-overlay {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: multiply;
-  transition: background-color 0.4s ease, opacity 0.4s ease;
-  pointer-events: none;
+.photo-bg {
+  z-index: 1;
 }
 
-/* Highlights overlay for 3D realism */
+.photo-fg {
+  z-index: 2;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.photo-fg.morphing {
+  animation: morphDissolve 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes morphDissolve {
+  0% {
+    opacity: 0;
+    transform: scale(1.018);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Highlights overlay for 3D depth */
 .room-highlight-layer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%, rgba(0,0,0,0.2) 100%);
+  z-index: 3;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%, rgba(0,0,0,0.2) 100%);
   pointer-events: none;
-}
-
-.finish-badge-tag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  color: var(--clr-accent-gold);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  padding: 4px 14px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-weight: 600;
 }
 
 .active-color-meta {
@@ -168,5 +172,11 @@ const sheenOpacity = computed(() => {
 .color-hex-tag:hover {
   background: var(--clr-accent-gold);
   color: #1f1211;
+}
+
+@media (max-width: 640px) {
+  .room-visualizer-container {
+    height: 320px;
+  }
 }
 </style>

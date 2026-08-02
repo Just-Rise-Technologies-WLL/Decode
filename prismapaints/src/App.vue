@@ -6,8 +6,14 @@
     <!-- Hero Scroll-Driven Animation Section -->
     <ScrollHero @open-modal="openModal" />
 
+    <!-- About Us & Interactive Product Showcase Section -->
+    <AboutProductsSection @open-modal="openModal" />
+
     <!-- Categories Grid Section -->
     <CategoryGrid />
+
+    <!-- Interactive Wall Section Layering Canvas Animation -->
+    <WallSectionAnimation @open-modal="openModal" />
 
     <!-- Finishes Horizontal Side-Scroll Section -->
     <FinishesGrid @open-modal="openModal" />
@@ -53,7 +59,9 @@
 <script setup>
 import Navbar from './components/layout/Navbar.vue'
 import ScrollHero from './components/hero/ScrollHero.vue'
+import AboutProductsSection from './components/about/AboutProductsSection.vue'
 import CategoryGrid from './components/categories/CategoryGrid.vue'
+import WallSectionAnimation from './components/wall/WallSectionAnimation.vue'
 import FinishesGrid from './components/finishes/FinishesGrid.vue'
 import ColorStudio from './components/studio/ColorStudio.vue'
 import ProjectsGrid from './components/projects/ProjectsGrid.vue'

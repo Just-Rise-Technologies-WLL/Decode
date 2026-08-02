@@ -15,9 +15,11 @@
   2. Bound global `window.mousemove` and `window.mouseup` event handlers when drag initiates for seamless tracking across the entire screen.
   3. Generated matching Before (unpainted raw concrete living room) and After (rich warm terracotta painted living room) architectural room photos.
 
-### [2026-08-02 10:22]
-- **Issue**: Photo frame image in `RoomVisualizer.vue` failed to load over network, rendering a white blank box with broken alt text.
-- **Root Cause**: External Unsplash network URL failed to fetch in the user's browser.
-- **Fix Implemented**: Replaced external image URL with an embedded vector gallery artwork inside `.photo-frame-mat` (0 network dependencies, 100% reliable instant load) and upgraded wall paint blend mode to dual-layer (`color` + `multiply`) for vibrant paint hues.
+### [2026-08-02 11:52]
+- **Issue**: Compressed video `hero_compressed.mp4` displayed as a blank/white screen in Google Chrome and Safari HTML5 video player.
+- **Root Cause**: OpenCV default `mp4v` codec (MPEG-4 Part 2) is unsupported by HTML5 browser video players.
+- **Fix Implemented**: Re-encoded the Hero video using native H.264 (`avc1`) fourcc codec down to a 16.5 MB web-streamable MP4 file (`/video/hero_compressed.mp4`), delivering 100% video playback in Chrome & Safari with 82% file size reduction.
+
+
 
 

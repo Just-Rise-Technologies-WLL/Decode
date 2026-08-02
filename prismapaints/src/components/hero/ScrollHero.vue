@@ -31,8 +31,6 @@
         </p>
         <div style="display: flex; gap: 16px;">
           <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
-        <div style="display: flex; gap: 16px;">
-          <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
           <a href="#about" class="btn-outline" style="border-color: #1a1816; color: #1a1816;">About Prisma</a>
         </div>
       </div>
@@ -49,7 +47,7 @@
 </template>
 
 <script setup>
-import heroVideoUrl from '/video/Herosection VIdeo.mov?url'
+import heroVideoUrl from '/video/hero_compressed.mp4?url'
 
 defineEmits(['open-modal'])
 </script>

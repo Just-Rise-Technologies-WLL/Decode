@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 11:23]
-- **Activity**: Redesigned Hero Card & Navbar with Light Frosted Crystal Glassmorphism.
-- **Details**: Updated `ScrollHero.vue` and `Navbar.vue` to use a light frosted glass linear gradient (`background: linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.22) 100%)`), high saturation blur (`backdrop-filter: blur(28px) saturate(180%)`), inner glass bevel shadow, and dark luxury charcoal typography for high legibility and real frosted crystal glass optics.
+### [2026-08-02 11:53]
+- **Activity**: Re-encoded Hero Video with Native H.264 (AVC1) HTML5 Codec.
+- **Details**: Re-encoded the Hero video into a native H.264 (`avc1`) 16.5 MB MP4 file (`/video/hero_compressed.mp4`), achieving an **82% file size reduction** from 92.3 MB with 100% native HTML5 playback support in Chrome, Safari, Firefox, and Edge.
 

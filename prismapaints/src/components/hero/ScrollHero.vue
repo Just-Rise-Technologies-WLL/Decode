@@ -1,11 +1,12 @@
 <template>
   <section class="hero-video-container">
-    <!-- Native Hardware-Accelerated 60FPS Video -->
+    <!-- Native Hardware-Accelerated 60FPS Video with 0ms Poster Fallback -->
     <video 
       autoplay 
       loop 
       muted 
       playsinline 
+      poster="/sequence/frame_0001.jpg"
       class="hero-bg-video"
       @loadeddata="$emit('video-loaded')"
       @canplaythrough="$emit('video-loaded')"
@@ -33,7 +34,7 @@
         </p>
         <div style="display: flex; gap: 16px;">
           <button @click="$emit('open-modal')" class="btn-primary">Explore Palette</button>
-          <a href="#about" class="btn-outline" style="border-color: #1a1816; color: #1a1816;">About Prisma</a>
+          <a href="#about" class="btn-outline" style="border-color: #1a1816; color: #1a1816; background: rgba(255,255,255,0.4);">About Prisma</a>
         </div>
       </div>
     </div>
@@ -78,7 +79,7 @@ defineEmits(['open-modal', 'video-loaded'])
 .hero-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.15) 100%);
+  background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.12) 100%);
   z-index: 2;
   pointer-events: none;
 }
@@ -89,18 +90,18 @@ defineEmits(['open-modal', 'video-loaded'])
   width: 90%;
   max-width: 1240px;
   margin: 0 auto;
-  color: #1a1816;
+  color: #11100f;
 }
 
 .hero-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.22) 100%);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 28px;
   padding: 60px 48px;
   max-width: 580px;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 25px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 20px 50px rgba(0, 0, 0, 0.12);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -110,7 +111,7 @@ defineEmits(['open-modal', 'video-loaded'])
   text-transform: uppercase;
   color: #7C3B29;
   margin-bottom: 14px;
-  font-weight: 700;
+  font-weight: 800;
   display: block;
 }
 
@@ -118,14 +119,14 @@ defineEmits(['open-modal', 'video-loaded'])
   font-size: 3.5rem;
   margin-bottom: 20px;
   line-height: 1.08;
-  color: #1a1816;
+  color: #11100f;
 }
 
 .hero-desc {
   font-size: 1.1rem;
-  color: #2d2824;
+  color: #24201c;
   margin-bottom: 30px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .scroll-indicator {

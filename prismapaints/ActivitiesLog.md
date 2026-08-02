@@ -42,7 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-02 12:00]
-- **Activity**: Built & Integrated Full-Screen Luxury Brand Preloader Screen.
-- **Details**: Created `LoadingScreen.vue` and integrated it in `App.vue`. Features a dark luxury background (`#181614`), animated gold Prisma Paints logo pulse, and progress bar with `@video-loaded` event detection and smooth 0.65s fade-out transition.
+### [2026-08-02 12:19]
+- **Activity**: Removed All Text Drop-Shadow Rules for Crisp Flat Typography.
+- **Details**: Updated `ScrollHero.vue` to remove all `text-shadow` properties from `.hero-subtitle`, `.hero-title`, and `.hero-desc`. Typography is now 100% flat, crisp, and sharp with zero drop-shadow rings or fuzzy outlines behind the letters.
 

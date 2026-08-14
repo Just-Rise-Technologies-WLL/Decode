@@ -42,7 +42,30 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
-### [2026-08-03 02:06]
-- **Activity**: Rearranged Signature Color Shades Order in Color Studio.
-- **Details**: Updated `FIVE_SIGNATURE_SHADES` in `src/data/colorCatalog.js` to the exact order requested by user: **Alabaster White**, **Emerald Green**, **Mediterranean Blue**, **Imperial Red**, and **Deep Maroon**. Swatches in Color Studio & Room Visualizer now display in this exact sequence.
+### [2026-08-14 04:36]
+- **Activity**: Implemented Interactive Scroll-Driven Architectural Walkthrough Hero with Dynamic Hotspot Wall Pins & Mobile Drawer.
+- **Details**: 
+  - Upgraded `ScrollHero.vue` to render the 350-frame 60FPS LERP inertial sequence with room navigation pills.
+  - Created `src/data/heroHotspotsData.js` with frame range intervals, wall coordinates, and paint specs.
+  - Created `src/components/hero/HeroHotspotPin.vue` with radar pulse rings and toggle states.
+  - Created `src/components/hero/HotspotDetailCard.vue` providing desktop floating glass card and mobile slide-up bottom sheet drawer with 1-click sample ordering, palette saving, and studio visualizer linking.
+  - Updated `src/composables/useScrollCanvas.js` to expose reactive `currentFrame` and `isReady`.
+
+### [2026-08-14 04:41]
+- **Activity**: Removed Hero Frosted Card Overlay for Clean Architectural View.
+- **Details**: Removed `<div class="hero-content">` and hero card overlay from `ScrollHero.vue` to allow an unobstructed, full-screen luxury view of the 3D walkthrough canvas and interactive wall hotspot pins from frame 1.
+
+### [2026-08-14 04:47]
+- **Activity**: Implemented Magnetic Scroll Curve with Focal Frame Holds for Hotspots.
+- **Details**: Created piecewise plateau mapping (`mapScrollToTargetFrame`) in `useScrollCanvas.js` that automatically locks the camera on exact keyframes (Living Room: Frame 30, Master Suite: Frame 115, Dining Gallery: Frame 210, Private Lounge: Frame 305) during designated scroll windows. The wall surfaces and `+` hotspot pins now stay 100% stationary and effortless to click.
+
+### [2026-08-14 04:51]
+- **Activity**: Implemented Interactive Room & Shade Switcher Dock at Bottom of Hero.
+- **Details**: Added floating glassmorphic room dock (`.room-switcher-dock`) with 4 interactive shade pills in `ScrollHero.vue`. Users can now jump directly between rooms (Living Area, Master Suite, Dining Gallery, Private Lounge) in 1 click with smooth camera flight and active state synchronization.
+
+
+
+
+
+
 

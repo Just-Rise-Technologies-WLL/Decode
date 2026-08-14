@@ -16,7 +16,10 @@
 - **Modular Components**:
   - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (Hardware-Accelerated 60FPS Full-Screen Background Video using `/video/hero_compressed.mp4` with 0ms poster fallback `/sequence/frame_0001.jpg`, 10px ultra-sheer crystal glass card, and crisp flat shadow-free typography)
+  - `src/components/hero/ScrollHero.vue` (Hardware-Accelerated 60FPS Interactive 350-Frame Architectural Walkthrough Canvas with dynamic room zone indicator pills, LERP inertial scroll physics, and Floating Bottom Room Switcher Dock for 1-click room jumping)
+  - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
+  - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
+  - `src/data/heroHotspotsData.js` (Zone metadata, frame ranges, wall coordinates, and paint specifications for Living Room, Master Suite, Dining Gallery, and Private Lounge)
   - `src/components/wall/WallSectionAnimation.vue` (Interactive 300vh Scroll-Driven Frame Canvas rendering 240 HD frames in a luxury glassmorphic `.wall-boxed-card` with aspect-contain scaling for zero detail cropping)
   - `src/components/about/AboutProductsSection.vue` (Unified About Us section + Signature Products showcase with 60fps Photo-Real parabolic arc flight engine matching Green and Blue photo cans 100% in handles, metallic rims, and lighting)
   - `src/components/about/ThreeDCanCanvas.vue` (Real Three.js WebGL 3D Cylinder Paint Can Mesh with studio lighting, gold metallic rim, and 360° scroll-driven 3D cylinder rotation)
@@ -28,7 +31,7 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Butter-Smooth 60FPS LERP Canvas Engine: 300 HD Frames extracted from 0:18–1:18 segment of 3D Private Residence Architectural Walkthrough Video)
+  - `src/composables/useScrollCanvas.js` (Butter-Smooth 60FPS LERP Canvas Engine: 350 HD Frames with piecewise non-linear magnetic scroll plateaus for rock-solid frame holds at hotspots, reactive frame tracking `currentFrame`, resize observer, and cover scaling)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

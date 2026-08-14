@@ -6,8 +6,13 @@
     <!-- Header Navigation -->
     <Navbar @open-modal="openModal" />
 
-    <!-- Hero Scroll-Driven Animation Section -->
-    <ScrollHero @open-modal="openModal" @video-loaded="dismissPreloader" />
+    <!-- Hero Scroll-Driven Animation Section with Architectural Hotspots -->
+    <ScrollHero 
+      :saved-palette="myPalette"
+      @open-modal="openModal" 
+      @toggle-palette="togglePalette"
+      @video-loaded="dismissPreloader" 
+    />
 
     <!-- About Us & Interactive Product Showcase Section -->
     <AboutProductsSection @open-modal="openModal" />

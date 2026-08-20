@@ -42,6 +42,7 @@
 
 ### [2026-08-02 02:24]
 - **Activity**: Implemented Scroll-Driven Rotating Product Landing Animation.
+
 ### [2026-08-14 04:36]
 - **Activity**: Implemented Interactive Scroll-Driven Architectural Walkthrough Hero with Dynamic Hotspot Wall Pins & Mobile Drawer.
 - **Details**: 
@@ -57,15 +58,30 @@
 
 ### [2026-08-14 04:47]
 - **Activity**: Implemented Magnetic Scroll Curve with Focal Frame Holds for Hotspots.
-- **Details**: Created piecewise plateau mapping (`mapScrollToTargetFrame`) in `useScrollCanvas.js` that automatically locks the camera on exact keyframes (Living Room: Frame 30, Master Suite: Frame 115, Dining Gallery: Frame 210, Private Lounge: Frame 305) during designated scroll windows. The wall surfaces and `+` hotspot pins now stay 100% stationary and effortless to click.
+- **Details**: Created piecewise plateau mapping (`mapScrollToTargetFrame`) in `useScrollCanvas.js` that automatically locks the camera on exact keyframes.
 
 ### [2026-08-14 04:51]
 - **Activity**: Implemented Interactive Room & Shade Switcher Dock at Bottom of Hero.
-- **Details**: Added floating glassmorphic room dock (`.room-switcher-dock`) with 4 interactive shade pills in `ScrollHero.vue`. Users can now jump directly between rooms (Living Area, Master Suite, Dining Gallery, Private Lounge) in 1 click with smooth camera flight and active state synchronization.
+- **Details**: Added floating glassmorphic room dock (`.room-switcher-dock`) with 4 interactive shade pills in `ScrollHero.vue`. Users can now jump directly between rooms in 1 click with smooth camera flight and active state synchronization.
 
+### [2026-08-20 14:20]
+- **Activity**: Implemented Dual-Mode Interactive Hero Canvas Engine (Mouse 3D Rotation + Scroll Walkthrough).
+- **Details**:
+  - Extracted 120 HD frames (`public/sequence_hover/hover_0001.jpg` to `0120.jpg`) from `public/final_video/mouseHover.mp4` with default mid-frame (60) resting center.
+  - Extracted 240 HD frames (`public/sequence/frame_0001.jpg` to `0240.jpg`) from `public/final_video/mouseScroll.mp4`.
+  - Upgraded `src/composables/useScrollCanvas.js` to support dual interaction.
 
+### [2026-08-20 14:25]
+- **Activity**: Calibrated Hotspot Pins to Precise Frames and Reduced Magnetic Hold Windows.
+- **Details**:
+  - Calibrated Pin 1 to **Frame 130** on the Green Living Area wall panel (`x: 24%, y: 44%`).
+  - Calibrated Pin 2 to **Frame 150** on the Blue Dining & Kitchen wall (`x: 18%, y: 46%`).
+  - Calibrated Pin 3 to **Frame 218** on the Master Suite headboard wall (`x: 45%, y: 46%`).
+  - Reduced holding plateaus in `useScrollCanvas.js` from 18% down to 7% for a 3x faster, more responsive walkthrough scroll.
 
-
-
-
-
+### [2026-08-20 14:32]
+- **Activity**: Implemented Luxury 360° Floating Magnetic Custom Cursor Follower in Hero Section.
+- **Details**:
+  - Added `.hero-cursor-follower` in `ScrollHero.vue` featuring a glowing gold precision dot and a glassmorphic `‹ 360° › ROTATE` badge that follows the mouse cursor.
+  - Added intelligent hover detection (`isHoveringBtn`) that morphs the cursor into a magnetic focus ring when hovering over interactive elements (buttons, links, dock pills, pins).
+  - Smoothly fades out during scroll walkthrough and auto-disables on touch screens.

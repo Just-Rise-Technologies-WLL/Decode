@@ -1,15 +1,41 @@
 <template>
-  <section ref="containerRef" class="hero-scroll-track" id="hero-walkthrough">
+  <section 
+    ref="containerRef" 
+    class="hero-scroll-track" 
+    id="hero-walkthrough"
+    @mousemove="handleHeroMouseMove"
+    @mouseleave="handleHeroMouseLeave"
+  >
     <!-- Sticky Pinned Viewport Container -->
     <div class="hero-pinned-wrapper">
-      <!-- 60FPS Hardware Accelerated Canvas -->
+      <!-- 60FPS Hardware Accelerated Dual-Mode Canvas -->
       <canvas ref="canvasRef" class="hero-canvas"></canvas>
 
       <!-- Vignette and Ambient Depth Gradient -->
       <div class="hero-vignette"></div>
 
-      <!-- Hotspots Wall Pin Overlay -->
-      <div class="hotspots-layer">
+      <!-- Luxury 360° Floating Magnetic Follower Cursor (Desktop Only) -->
+      <div 
+        class="hero-cursor-follower"
+        :class="{ 
+          'is-visible': cursorVisible && scrollProgress < 0.04,
+          'is-hovering-btn': isHoveringBtn
+        }"
+        :style="{ 
+          transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0)` 
+        }"
+      >
+        <!-- Center Precision Dot -->
+        <div class="cursor-dot"></div>
+        <!-- Orbit 360 Badge -->
+        <div class="cursor-pill-badge" v-if="!isHoveringBtn && isHoverMode">
+          <span class="pill-arrows">‹ 360° ›</span>
+          <span class="pill-title">ROTATE</span>
+        </div>
+      </div>
+
+      <!-- Hotspots Wall Pin Overlay (Active during scroll walkthrough) -->
+      <div class="hotspots-layer" :class="{ 'is-hidden': isHoverMode }">
         <HeroHotspotPin 
           v-for="spot in HERO_HOTSPOTS"
           :key="spot.id"
@@ -24,11 +50,11 @@
       <div class="room-nav-pill" :class="{ 'is-visible': scrollProgress > 0.02 }">
         <div class="room-nav-dot"></div>
         <span class="room-nav-text">{{ currentRoomName }}</span>
-        <span class="room-nav-frame">Frame {{ currentFrame + 1 }}/350</span>
+        <span class="room-nav-frame">Frame {{ currentFrame + 1 }}/240</span>
       </div>
 
       <!-- Interactive Bottom Room Switcher Dock -->
-      <div class="room-switcher-dock">
+      <div class="room-switcher-dock" :class="{ 'is-visible': scrollProgress > 0.015 }">
         <div class="dock-inner">
           <button 
             v-for="spot in HERO_HOTSPOTS"
@@ -49,7 +75,7 @@
         </div>
       </div>
 
-      <!-- Scroll to Explore Mouse Indicator -->
+      <!-- Interactive Mouse 3D Rotate & Scroll Explorer Indicator -->
       <div 
         class="scroll-indicator"
         :style="{ opacity: Math.max(0, 1 - scrollProgress * 4.5) }"
@@ -57,7 +83,7 @@
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
-        <span class="scroll-label">Scroll to Explore</span>
+        <span class="scroll-label">Scroll to Explore Walkthrough</span>
       </div>
 
       <!-- Interactive Hotspot Detail Card & Mobile Slide-Up Drawer -->
@@ -96,35 +122,59 @@ const containerRef = ref(null)
 const activeHotspot = ref(null)
 const isDetailOpen = ref(false)
 
-const { scrollProgress, currentFrame, isReady } = useScrollCanvas(canvasRef, containerRef, {
-  frameCount: 350,
-  imagePrefix: '/sequence/frame_',
-  imageExt: '.jpg',
+// Custom Magnetic Follower Cursor State
+const cursorPos = ref({ x: -100, y: -100 })
+const cursorVisible = ref(false)
+const isHoveringBtn = ref(false)
+
+const handleHeroMouseMove = (e) => {
+  cursorPos.value = {
+    x: e.clientX,
+    y: e.clientY
+  }
+  cursorVisible.value = true
+
+  const target = e.target
+  if (target && (target.closest('button') || target.closest('a') || target.closest('.dock-pill') || target.closest('.hotspot-pin-btn') || target.closest('.hotspot-card'))) {
+    isHoveringBtn.value = true
+  } else {
+    isHoveringBtn.value = false
+  }
+}
+
+const handleHeroMouseLeave = () => {
+  cursorVisible.value = false
+}
+
+const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(canvasRef, containerRef, {
+  hoverFrameCount: 120,
+  hoverPrefix: '/sequence_hover/hover_',
+  scrollFrameCount: 240,
+  scrollPrefix: '/sequence/frame_',
   onReady: () => {
     emit('video-loaded')
   }
 })
 
-// Active Room Identifier based on Frame Index
+// Active Room Identifier based on Calibrated Walkthrough Frames
 const activeRoomId = computed(() => {
   const f = currentFrame.value
-  if (f < 70) return 'living-room-accent'
-  if (f < 165) return 'master-bedroom-wall'
-  if (f < 255) return 'dining-hallway-stucco'
-  return 'lounge-terrace-facade'
+  if (f < 140) return 'living-room-green'
+  if (f < 185) return 'dining-kitchen-blue'
+  return 'master-bedroom-wall'
 })
 
 // Current Room Name based on Frame Index
 const currentRoomName = computed(() => {
   const f = currentFrame.value
-  if (f < 70) return 'Living Area'
-  if (f < 165) return 'Master Suite'
-  if (f < 255) return 'Dining Gallery'
-  return 'Private Lounge'
+  if (f < 140) return 'Living Area'
+  if (f < 185) return 'Dining Gallery'
+  return 'Master Suite'
 })
 
 // Check if a hotspot should be visible at current frame
 const isHotspotVisible = (spot) => {
+  if (isHoverMode.value) return false
   return currentFrame.value >= spot.startFrame && currentFrame.value <= spot.endFrame
 }
 
@@ -147,10 +197,9 @@ const closeDetail = () => {
 // 1-Click Smooth Teleporting to Room
 const jumpToRoom = (spot) => {
   if (!containerRef.value) return
-  let targetProgress = 0.12
-  if (spot.id === 'master-bedroom-wall') targetProgress = 0.38
-  else if (spot.id === 'dining-hallway-stucco') targetProgress = 0.64
-  else if (spot.id === 'lounge-terrace-facade') targetProgress = 0.88
+  let targetProgress = 0.18 // Frame 130
+  if (spot.id === 'dining-kitchen-blue') targetProgress = 0.47 // Frame 150
+  else if (spot.id === 'master-bedroom-wall') targetProgress = 0.79 // Frame 218
 
   const containerRect = containerRef.value.getBoundingClientRect()
   const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -194,8 +243,14 @@ onMounted(() => {
 <style scoped>
 .hero-scroll-track {
   position: relative;
-  height: 350vh;
+  height: 280vh;
   background-color: #161412;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-scroll-track {
+    cursor: default;
+  }
 }
 
 .hero-pinned-wrapper {
@@ -228,12 +283,100 @@ onMounted(() => {
   pointer-events: none;
 }
 
+/* Luxury 360 Floating Follower Cursor */
+.hero-cursor-follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate3d(-100px, -100px, 0);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.05s linear;
+  will-change: transform;
+}
+
+.hero-cursor-follower.is-visible {
+  opacity: 1;
+}
+
+.hero-cursor-follower.is-hovering-btn {
+  opacity: 0.25;
+}
+
+.cursor-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #D4AF37;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.9), 0 0 2px #ffffff;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.hero-cursor-follower.is-hovering-btn .cursor-dot {
+  width: 22px;
+  height: 22px;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1.5px solid #D4AF37;
+}
+
+.cursor-pill-badge {
+  background: rgba(18, 16, 14, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 100px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translate(6px, -50%);
+  white-space: nowrap;
+  animation: floatCursorPill 2s ease-in-out infinite alternate;
+}
+
+@keyframes floatCursorPill {
+  0% { transform: translate(6px, -50%) scale(0.98); }
+  100% { transform: translate(10px, -50%) scale(1.02); }
+}
+
+.pill-arrows {
+  color: #D4AF37;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.pill-title {
+  color: #f7f6f4;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+@media (pointer: coarse), (hover: none) {
+  .hero-cursor-follower {
+    display: none !important;
+  }
+}
+
 /* Hotspots Pin Overlay */
 .hotspots-layer {
   position: absolute;
   inset: 0;
   z-index: 15;
   pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.hotspots-layer.is-hidden {
+  opacity: 0;
 }
 
 /* Active Room Nav Pill (Top Center) */
@@ -300,11 +443,18 @@ onMounted(() => {
   position: absolute;
   bottom: 28px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(10px);
   z-index: 22;
   width: 90%;
   max-width: 820px;
   pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.room-switcher-dock.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .dock-inner {
@@ -403,21 +553,18 @@ onMounted(() => {
   color: #E6CA65;
 }
 
-/* Scroll Mouse Indicator (Positioned above dock on initial load) */
+/* Scroll Mouse Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 100px;
+  bottom: 85px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: #ffffff;
-  font-size: 0.72rem;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
@@ -448,6 +595,13 @@ onMounted(() => {
   100% { opacity: 0; top: 22px; }
 }
 
+.scroll-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #a8a29b;
+}
+
 @media (max-width: 768px) {
   .room-switcher-dock {
     bottom: 16px;
@@ -465,10 +619,10 @@ onMounted(() => {
     font-size: 0.7rem;
   }
   .dock-shade-code {
-    display: none; /* Keep clean on small screens */
+    display: none;
   }
   .scroll-indicator {
-    bottom: 85px;
+    bottom: 70px;
   }
 }
 </style>

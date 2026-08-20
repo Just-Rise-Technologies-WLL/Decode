@@ -21,22 +21,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   isLoading: { type: Boolean, default: true }
 })
 
-const progress = ref(15)
+const progress = ref(20)
 let progressInterval = null
+
+watch(() => props.isLoading, (loading) => {
+  if (!loading) {
+    progress.value = 100
+    if (progressInterval) clearInterval(progressInterval)
+  }
+})
 
 onMounted(() => {
   progressInterval = setInterval(() => {
     if (progress.value < 90) {
-      progress.value += Math.random() * 12 + 5
+      progress.value += Math.random() * 8 + 4
       if (progress.value > 90) progress.value = 90
     }
-  }, 180)
+  }, 120)
 })
 
 onUnmounted(() => {
@@ -80,7 +87,7 @@ onUnmounted(() => {
   font-size: 0.72rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--clr-accent-gold);
+  color: var(--clr-accent-gold, #D4AF37);
   margin-bottom: 28px;
   font-weight: 600;
 }

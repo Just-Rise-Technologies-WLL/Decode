@@ -234,9 +234,7 @@ const handleExploreStudio = () => {
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    emit('video-loaded')
-  }, 1200)
+  // video-loaded is deterministically emitted when the initial resting frame is drawn to canvas
 })
 </script>
 

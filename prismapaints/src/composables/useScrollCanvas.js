@@ -20,64 +20,31 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   const isHoverMode = ref(true)
   const isReady = ref(false)
 
+  // Mid-frame resting index (e.g. Frame 60 for 120-frame hover)
+  const midFrameIndex = Math.floor(hoverFrameCount / 2)
+
   // Physics LERP State
-  let currentHoverFloat = (hoverFrameCount - 1) / 2 // Start at exact mid-frame
-  let targetHoverFloat = (hoverFrameCount - 1) / 2
+  let currentHoverFloat = midFrameIndex
+  let targetHoverFloat = midFrameIndex
   let currentScrollFloat = 0
   let targetScrollFloat = 0
   let animFrameId = null
 
   // Image caches
-  const loadedHoverImages = []
-  const loadedScrollImages = []
+  const loadedHoverImages = new Array(hoverFrameCount)
+  const loadedScrollImages = new Array(scrollFrameCount)
 
   // Mouse normalized coordinates (0.0 to 1.0, 0.5 center)
   let normMouseX = 0.5
   let normMouseY = 0.5
 
-  // 1. Preload Hover & Scroll Frame Sequences
-  const initSequences = () => {
-    let hoverLoadedCount = 0
-    let scrollLoadedCount = 0
-
-    // Preload Hover Sequence (120 frames)
-    for (let i = 1; i <= hoverFrameCount; i++) {
-      const paddedNum = String(i).padStart(4, '0')
-      const img = new Image()
-      img.src = `${hoverPrefix}${paddedNum}${hoverExt}`
-      img.onload = () => {
-        hoverLoadedCount++
-        if (hoverLoadedCount >= 5 && !isReady.value) {
-          isReady.value = true
-          if (options.onReady) options.onReady()
-        }
-        if (hoverLoadedCount > 1 && animFrameId === null) {
-          startAnimationLoop()
-        }
-      }
-      loadedHoverImages.push(img)
-    }
-
-    // Preload Scroll Walkthrough Sequence (240 frames)
-    for (let i = 1; i <= scrollFrameCount; i++) {
-      const paddedNum = String(i).padStart(4, '0')
-      const img = new Image()
-      img.src = `${scrollPrefix}${paddedNum}${scrollExt}`
-      img.onload = () => {
-        scrollLoadedCount++
-        if (scrollLoadedCount >= 5 && !isReady.value) {
-          isReady.value = true
-          if (options.onReady) options.onReady()
-        }
-      }
-      loadedScrollImages.push(img)
-    }
-  }
-
   // Draw image with aspect ratio 'cover'
   const drawCoverMedia = (media, naturalWidth, naturalHeight) => {
-    if (!canvasRef.value || !ctx) return
+    if (!canvasRef.value) return
     const canvas = canvasRef.value
+    if (!ctx) ctx = canvas.getContext('2d')
+    if (!ctx) return
+
     const w = canvas.width
     const h = canvas.height
 
@@ -97,6 +64,58 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     drawY = (h - drawH) / 2
 
     ctx.drawImage(media, drawX, drawY, drawW, drawH)
+  }
+
+  // 1. Preload Priority Resting Frame First, then background stream the rest
+  const initSequences = () => {
+    // --- STEP 1: PRIORITY LOAD RESTING MID-FRAME ---
+    const midNum = String(midFrameIndex + 1).padStart(4, '0')
+    const primaryImg = new Image()
+    primaryImg.src = `${hoverPrefix}${midNum}${hoverExt}`
+
+    const onPrimaryReady = () => {
+      loadedHoverImages[midFrameIndex] = primaryImg
+      // Immediate paint to canvas before dismissing preloader
+      if (canvasRef.value) {
+        handleResize()
+        drawCoverMedia(primaryImg, primaryImg.naturalWidth || 1920, primaryImg.naturalHeight || 1080)
+      }
+      if (!isReady.value) {
+        isReady.value = true
+        if (options.onReady) options.onReady()
+      }
+      if (animFrameId === null) {
+        startAnimationLoop()
+      }
+    }
+
+    primaryImg.onload = onPrimaryReady
+    if (primaryImg.complete && primaryImg.naturalWidth !== 0) {
+      onPrimaryReady()
+    }
+
+    // --- STEP 2: LOAD REMAINING HOVER FRAMES ---
+    for (let i = 1; i <= hoverFrameCount; i++) {
+      const idx = i - 1
+      if (idx === midFrameIndex) continue
+      const paddedNum = String(i).padStart(4, '0')
+      const img = new Image()
+      img.src = `${hoverPrefix}${paddedNum}${hoverExt}`
+      img.onload = () => {
+        loadedHoverImages[idx] = img
+      }
+    }
+
+    // --- STEP 3: LOAD SCROLL WALKTHROUGH FRAMES ---
+    for (let i = 1; i <= scrollFrameCount; i++) {
+      const idx = i - 1
+      const paddedNum = String(i).padStart(4, '0')
+      const img = new Image()
+      img.src = `${scrollPrefix}${paddedNum}${scrollExt}`
+      img.onload = () => {
+        loadedScrollImages[idx] = img
+      }
+    }
   }
 
   // Butter-Smooth Continuous RAF Loop with Dual-State LERP Interpolation
@@ -122,15 +141,9 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
         
         currentFrame.value = hoverIndex
 
-        const hoverImg = loadedHoverImages[hoverIndex]
+        const hoverImg = loadedHoverImages[hoverIndex] || loadedHoverImages[midFrameIndex]
         if (hoverImg && hoverImg.complete && hoverImg.naturalWidth !== 0) {
           drawCoverMedia(hoverImg, hoverImg.naturalWidth, hoverImg.naturalHeight)
-        } else {
-          const midIdx = Math.floor(hoverFrameCount / 2)
-          const midImg = loadedHoverImages[midIdx] || loadedHoverImages[0]
-          if (midImg && midImg.complete && midImg.naturalWidth !== 0) {
-            drawCoverMedia(midImg, midImg.naturalWidth, midImg.naturalHeight)
-          }
         }
       } 
       // --- STATE 2: SCROLL-DRIVEN ARCHITECTURAL WALKTHROUGH ---
@@ -140,11 +153,15 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
 
         currentFrame.value = scrollIndex
 
-        const scrollImg = loadedScrollImages[scrollIndex]
+        const scrollImg = loadedScrollImages[scrollIndex] || loadedScrollImages[0]
         if (scrollImg && scrollImg.complete && scrollImg.naturalWidth !== 0) {
           drawCoverMedia(scrollImg, scrollImg.naturalWidth, scrollImg.naturalHeight)
-        } else if (loadedScrollImages[0] && loadedScrollImages[0].complete) {
-          drawCoverMedia(loadedScrollImages[0], loadedScrollImages[0].naturalWidth, loadedScrollImages[0].naturalHeight)
+        } else {
+          // Fallback to hover frame if scroll frame is buffering
+          const fallback = loadedHoverImages[midFrameIndex]
+          if (fallback && fallback.complete && fallback.naturalWidth !== 0) {
+            drawCoverMedia(fallback, fallback.naturalWidth, fallback.naturalHeight)
+          }
         }
       }
 
@@ -158,6 +175,10 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
     if (!canvasRef.value) return
     canvasRef.value.width = window.innerWidth
     canvasRef.value.height = window.innerHeight
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
+    }
   }
 
   /**
@@ -214,7 +235,7 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
 
   const handleMouseLeave = () => {
     if (scrollProgress.value < 0.02) {
-      targetHoverFloat = (hoverFrameCount - 1) / 2
+      targetHoverFloat = midFrameIndex
     }
   }
 

@@ -20,6 +20,12 @@
 - **Root Cause**: OpenCV default `mp4v` codec (MPEG-4 Part 2) is unsupported by HTML5 browser video players.
 - **Fix Implemented**: Re-encoded the Hero video using native H.264 (`avc1`) fourcc codec down to a 16.5 MB web-streamable MP4 file (`/video/hero_compressed.mp4`), delivering 100% video playback in Chrome & Safari with 82% file size reduction.
 
-
-
-
+### [2026-08-20 14:48]
+- **Issue**: Page displayed an empty dark/white screen on initial load while video frames were still buffering over network hosting (Vercel).
+- **Root Cause**: 
+  1. `index.html` lacked dark `#181614` background, causing a momentary white flash before Vue mounted.
+  2. `ScrollHero.vue` had a hardcoded `1200ms` `setTimeout` emitting `video-loaded` before the resting frame image was downloaded and drawn to canvas.
+- **Fix Implemented**:
+  1. Added `#181614` dark background styling in `index.html` and `#app-root`.
+  2. Upgraded `useScrollCanvas.js` to prioritize loading the resting mid-frame (Frame 60) and immediately painting it to the canvas before triggering `onReady()`.
+  3. Removed premature timers so the loading screen stays visible with active progress bar until the frame is confirmed painted.

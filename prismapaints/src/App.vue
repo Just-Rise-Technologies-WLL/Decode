@@ -87,15 +87,15 @@ const dismissPreloader = () => {
   if (isSiteLoading.value) {
     setTimeout(() => {
       isSiteLoading.value = false
-    }, 400)
+    }, 350)
   }
 }
 
 onMounted(() => {
-  // Safety fallback: dismiss preloader after 2.2 seconds max
+  // Long safety fallback (12 seconds) only if user has extremely slow connection or network stall
   setTimeout(() => {
     dismissPreloader()
-  }, 2200)
+  }, 12000)
 })
 
 const {
@@ -125,3 +125,11 @@ const handleToast = (msg) => {
   }, 3500)
 }
 </script>
+
+<style>
+#app-root {
+  background-color: #181614;
+  min-height: 100vh;
+  width: 100%;
+}
+</style>

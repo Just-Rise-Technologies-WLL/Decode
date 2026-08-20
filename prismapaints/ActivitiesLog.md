@@ -85,3 +85,10 @@
   - Added `.hero-cursor-follower` in `ScrollHero.vue` featuring a glowing gold precision dot and a glassmorphic `‹ 360° › ROTATE` badge that follows the mouse cursor.
   - Added intelligent hover detection (`isHoveringBtn`) that morphs the cursor into a magnetic focus ring when hovering over interactive elements (buttons, links, dock pills, pins).
   - Smoothly fades out during scroll walkthrough and auto-disables on touch screens.
+
+### [2026-08-20 14:48]
+- **Activity**: Synchronized Preloader Dismissal with Confirmed 1st Frame Painting.
+- **Details**:
+  - Eliminated initial white background by adding `#181614` styling directly to `index.html` and `#app-root`.
+  - Upgraded `useScrollCanvas.js` to prioritize loading the resting frame (`hover_0060.jpg`) and immediately painting it to the `<canvas>` before triggering `onReady()`.
+  - Removed premature `setTimeout` bypass timers from `ScrollHero.vue` and `App.vue` so the loading screen stays active until the initial view is 100% visible and rendered.

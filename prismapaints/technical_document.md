@@ -27,11 +27,11 @@
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Pinned Side-Scroll with 9 Finish Categories, dynamic scroll width calculation, and 100% full view end spacer)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Stacked Morph-Dissolve 5-Color Room Visualizer rendering shades in sequence: Alabaster White, Emerald Green, Mediterranean Blue, Imperial Red, Deep Maroon), `SwatchGrid.vue`
   - `src/components/projects/ProjectsGrid.vue` (Interactive Before/After Project Cards)
-  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, percentage loading bar, and video-loaded fade-out transition)
+  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, progress percentage bar with 100% snap on confirmed frame render, and video-loaded fade-out transition)
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: Preloads 120-frame hover sequence centered at mid-frame 60 for mouse 3D rotation, and 240-frame scroll walkthrough with streamlined ~7% magnetic plateaus for rock-solid frame holds at hotspots without sluggish scroll feel)
+  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: Priority loading of initial resting frame 60 with immediate canvas painting before emitting onReady, and 240-frame scroll walkthrough with streamlined ~7% magnetic plateaus for rock-solid frame holds at hotspots without sluggish scroll feel)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

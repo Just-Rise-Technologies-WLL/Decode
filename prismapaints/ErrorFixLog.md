@@ -38,3 +38,10 @@
 - **Fix Implemented**:
   1. Converted all frames to modern WebP format (`.webp`), slashing payload down by 75%.
   2. Implemented priority 2-frame initial paint (loads in < 50ms) followed by a gentle 6-connection background batch stream queue in `useScrollCanvas.js`.
+
+### [2026-08-23 12:06]
+- **Issue**: On hard refresh (`Shift + Ctrl + R` / empty cache), preloader disappeared immediately and screen stayed blank/black while the 8MB video was still downloading.
+- **Root Cause**: `video.play()` returns a Promise (`p.then()`) that resolves when the play request is received by the browser engine, NOT when video frames are downloaded and rendered. This dismissed the preloader in 1ms on an empty cache before any video data arrived.
+- **Fix Implemented**:
+  1. Strictly bound preloader dismissal to confirmed frame advancement (`video.currentTime >= 0.05s`). On hard reloads, the loading screen stays visible until the video is actively rolling.
+  2. Generated and bound instant WebP video poster frames (`intro_poster.webp` and `intro_poster_mobile.webp`) to eliminate any black screen gaps.

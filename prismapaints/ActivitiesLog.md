@@ -108,15 +108,14 @@
   - Implemented smart staggered batch queue in `useScrollCanvas.js` (6-connection browser standard) that eliminates network congestion on live hosting (Vercel).
   - Resting frame (Frame 60) loads and paints in < 50ms, delivering instant display without blank screen delay.
 
-### [2026-08-23 09:44]
-- **Activity**: Applied MP4 FastStart Relocation and Active Video Playback Synchronization.
-- **Details**:
-  - Restored clean original video files and bound explicit `nextTick` play lifecycle hooks on the video DOM element.
-  - Connected `loadedmetadata`, `loadeddata`, `canplay`, and `timeupdate` handlers to ensure instant playback initialization on both desktop and mobile viewports.
-
 ### [2026-08-23 10:20]
 - **Activity**: Converted Entire Site Image Library (23 Assets) to Optimized WebP.
 - **Details**:
-  - Converted all 4K paint cans (`red.webp`, `blue.webp`, `green.webp`), 3D can textures (`texture 2.webp`), 5 Color Studio wall panels (`WhiteWall.webp`, `GreenWall.webp`, `BlueWall.webp`, `RedWall.webp`, `MaroonWall.webp`), Before/After Landmark project photos, and slider images to high-efficiency WebP.
-  - Slashed site image payload from **125.8 MB down to 5.6 MB (-95.5% reduction)** while preserving 100% crystal-clear RGBA alpha transparency.
+  - Slashed site image payload from **125.8 MB down to 5.6 MB (-95.5% reduction)**.
   - Updated all component references across `AboutProductsSection.vue`, `ThreeDCanCanvas.vue`, `RoomVisualizer.vue`, `ProjectsGrid.vue`, `FinishesGrid.vue`, `Navbar.vue`, `Footer.vue`, and `LoadingScreen.vue`.
+
+### [2026-08-23 12:06]
+- **Activity**: Fixed Uncached Hard Reload (`Shift + Ctrl + R`) Blank Screen & Added Instant Posters.
+- **Details**:
+  - Removed premature `p.then()` preloader dismissal in `ScrollHero.vue`. Preloader now stays active until the video has confirmed advancing frames (`video.currentTime >= 0.05s`).
+  - Extracted instant WebP posters (`intro_poster.webp` and `intro_poster_mobile.webp`) bound directly to the `<video>` element, ensuring zero black screen during buffering.

@@ -92,10 +92,10 @@ const dismissPreloader = () => {
 }
 
 onMounted(() => {
-  // Long safety fallback (12 seconds) only if user has extremely slow connection or network stall
+  // Long safety fallback (15 seconds) only if user has extremely slow connection or network stall
   setTimeout(() => {
     dismissPreloader()
-  }, 12000)
+  }, 15000)
 })
 
 const {

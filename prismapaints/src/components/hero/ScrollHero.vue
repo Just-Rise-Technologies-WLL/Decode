@@ -21,6 +21,7 @@
             ref="introVideoRef"
             class="hero-intro-video"
             :src="introVideoSrc"
+            :poster="introPosterSrc"
             autoplay
             muted
             playsinline
@@ -167,6 +168,12 @@ const introVideoSrc = computed(() => {
     : '/final_video/BuildingHollowgram_web.mp4'
 })
 
+const introPosterSrc = computed(() => {
+  return isMobile.value
+    ? '/final_video/intro_poster_mobile.webp'
+    : '/final_video/intro_poster.webp'
+})
+
 const startPlay = () => {
   const vid = introVideoRef.value
   if (!vid) return
@@ -175,20 +182,18 @@ const startPlay = () => {
   vid.playsInline = true
   const p = vid.play()
   if (p !== undefined) {
-    p.then(() => {
-      if (!isVideoBuffered.value) {
-        isVideoBuffered.value = true
-        emit('video-loaded')
+    p.catch(() => {
+      if (introVideoRef.value) {
+        introVideoRef.value.muted = true
+        introVideoRef.value.play().catch(() => {})
       }
-    }).catch(() => {
-      vid.muted = true
-      vid.play().catch(() => {})
     })
   }
 }
 
 const handleVideoPlaying = () => {
-  if (!isVideoBuffered.value) {
+  // Only trigger dismiss when video is confirmed actively rendering frames
+  if (!isVideoBuffered.value && introVideoRef.value && introVideoRef.value.currentTime >= 0.05) {
     isVideoBuffered.value = true
     emit('video-loaded')
   }
@@ -196,7 +201,8 @@ const handleVideoPlaying = () => {
 
 const handleIntroTimeUpdate = () => {
   if (!introVideoRef.value) return
-  if (!isVideoBuffered.value && introVideoRef.value.currentTime > 0) {
+  // On uncached hard reloads, only dismiss once frames are visibly advancing
+  if (!isVideoBuffered.value && introVideoRef.value.currentTime >= 0.05) {
     isVideoBuffered.value = true
     emit('video-loaded')
   }

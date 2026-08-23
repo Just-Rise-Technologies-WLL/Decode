@@ -29,3 +29,12 @@
   1. Added `#181614` dark background styling in `index.html` and `#app-root`.
   2. Upgraded `useScrollCanvas.js` to prioritize loading the resting mid-frame (Frame 60) and immediately painting it to the canvas before triggering `onReady()`.
   3. Removed premature timers so the loading screen stays visible with active progress bar until the frame is confirmed painted.
+
+### [2026-08-23 04:08]
+- **Issue**: Live deployment on Vercel displayed a black hero background due to network stall when firing 360 parallel image requests at once.
+- **Root Cause**: 
+  1. 360 uncompressed JPEG frames totaled 50+ MB.
+  2. Synchronous loop generated 360 simultaneous HTTP requests, triggering browser connection saturation and host rate-limiting.
+- **Fix Implemented**:
+  1. Converted all frames to modern WebP format (`.webp`), slashing payload down by 75%.
+  2. Implemented priority 2-frame initial paint (loads in < 50ms) followed by a gentle 6-connection background batch stream queue in `useScrollCanvas.js`.

@@ -211,8 +211,10 @@ const handleHeroMouseLeave = () => {
 const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(canvasRef, containerRef, {
   hoverFrameCount: 120,
   hoverPrefix: '/sequence_hover/hover_',
+  hoverExt: '.webp',
   scrollFrameCount: 240,
   scrollPrefix: '/sequence/frame_',
+  scrollExt: '.webp',
   onReady: () => {
     emit('video-loaded')
   }

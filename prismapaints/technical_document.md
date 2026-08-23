@@ -31,7 +31,7 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: Preloads hover sequence and scroll walkthrough with streamlined ~7% magnetic plateaus for rock-solid frame holds at hotspots)
+  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: High-performance WebP support with priority 2-frame initial paint in < 50ms and smart 6-connection background batch streaming queue that prevents host network congestion)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

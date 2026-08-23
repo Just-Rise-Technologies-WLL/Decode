@@ -107,3 +107,9 @@
   - Converted all 120 hover frames and 240 scroll walkthrough frames into ultra-lightweight WebP format (`.webp`).
   - Implemented smart staggered batch queue in `useScrollCanvas.js` (6-connection browser standard) that eliminates network congestion on live hosting (Vercel).
   - Resting frame (Frame 60) loads and paints in < 50ms, delivering instant display without blank screen delay.
+
+### [2026-08-23 04:14]
+- **Activity**: Locked Loading Screen to Confirmed Video Buffering Events (`canplaythrough` / `playing`).
+- **Details**:
+  - Connected `canplay`, `canplaythrough`, and `playing` event listeners on the intro `<video>` element in `ScrollHero.vue`.
+  - Preloader only dismisses when the video is buffered and actively rolling on screen, eliminating any chance of an unrendered or black canvas state.

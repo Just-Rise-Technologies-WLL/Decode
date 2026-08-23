@@ -25,7 +25,9 @@
             muted
             playsinline
             preload="auto"
-            @loadeddata="handleIntroLoaded"
+            @canplay="handleVideoReady"
+            @canplaythrough="handleVideoReady"
+            @playing="handleVideoReady"
             @timeupdate="handleIntroTimeUpdate"
             @ended="finishIntro"
           ></video>
@@ -162,8 +164,16 @@ const introVideoSrc = computed(() => {
     : '/final_video/BuildingHollowgram_web.mp4'
 })
 
-const handleIntroLoaded = () => {
-  emit('video-loaded')
+const isVideoBuffered = ref(false)
+
+const handleVideoReady = () => {
+  if (!isVideoBuffered.value) {
+    isVideoBuffered.value = true
+    if (introVideoRef.value) {
+      introVideoRef.value.play().catch(() => {})
+    }
+    emit('video-loaded')
+  }
 }
 
 const handleIntroTimeUpdate = () => {
@@ -216,7 +226,10 @@ const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(c
   scrollPrefix: '/sequence/frame_',
   scrollExt: '.webp',
   onReady: () => {
-    emit('video-loaded')
+    // If intro video finished or not active, emit video-loaded
+    if (!isIntroPlaying.value) {
+      emit('video-loaded')
+    }
   }
 })
 

@@ -14,11 +14,34 @@
       <!-- Vignette and Ambient Depth Gradient -->
       <div class="hero-vignette"></div>
 
+      <!-- Phase 1: 5-Second Cinematic Intro Video Layer (Desktop + Mobile Responsive) -->
+      <transition name="intro-fade">
+        <div v-if="isIntroPlaying" class="hero-intro-video-wrapper">
+          <video 
+            ref="introVideoRef"
+            class="hero-intro-video"
+            :src="introVideoSrc"
+            autoplay
+            muted
+            playsinline
+            preload="auto"
+            @loadeddata="handleIntroLoaded"
+            @timeupdate="handleIntroTimeUpdate"
+            @ended="finishIntro"
+          ></video>
+
+          <!-- Skip Intro Button -->
+          <button class="skip-intro-pill" @click="finishIntro" aria-label="Explore 3D Walkthrough">
+            <span>Skip Intro ❯</span>
+          </button>
+        </div>
+      </transition>
+
       <!-- Luxury 360° Floating Magnetic Follower Cursor (Desktop Only) -->
       <div 
         class="hero-cursor-follower"
         :class="{ 
-          'is-visible': cursorVisible && scrollProgress < 0.04,
+          'is-visible': cursorVisible && scrollProgress < 0.04 && !isIntroPlaying,
           'is-hovering-btn': isHoveringBtn
         }"
         :style="{ 
@@ -35,7 +58,7 @@
       </div>
 
       <!-- Hotspots Wall Pin Overlay (Active during scroll walkthrough) -->
-      <div class="hotspots-layer" :class="{ 'is-hidden': isHoverMode }">
+      <div class="hotspots-layer" :class="{ 'is-hidden': isHoverMode || isIntroPlaying }">
         <HeroHotspotPin 
           v-for="spot in HERO_HOTSPOTS"
           :key="spot.id"
@@ -47,14 +70,14 @@
       </div>
 
       <!-- Room Zone Floating Pill Indicator (Top Center) -->
-      <div class="room-nav-pill" :class="{ 'is-visible': scrollProgress > 0.02 }">
+      <div class="room-nav-pill" :class="{ 'is-visible': scrollProgress > 0.02 && !isIntroPlaying }">
         <div class="room-nav-dot"></div>
         <span class="room-nav-text">{{ currentRoomName }}</span>
         <span class="room-nav-frame">Frame {{ currentFrame + 1 }}/240</span>
       </div>
 
       <!-- Interactive Bottom Room Switcher Dock -->
-      <div class="room-switcher-dock" :class="{ 'is-visible': scrollProgress > 0.015 }">
+      <div class="room-switcher-dock" :class="{ 'is-visible': scrollProgress > 0.015 && !isIntroPlaying }">
         <div class="dock-inner">
           <button 
             v-for="spot in HERO_HOTSPOTS"
@@ -78,7 +101,7 @@
       <!-- Interactive Mouse 3D Rotate & Scroll Explorer Indicator -->
       <div 
         class="scroll-indicator"
-        :style="{ opacity: Math.max(0, 1 - scrollProgress * 4.5) }"
+        :style="{ opacity: isIntroPlaying ? 0 : Math.max(0, 1 - scrollProgress * 4.5) }"
       >
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
@@ -101,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useScrollCanvas } from '../../composables/useScrollCanvas.js'
 import { HERO_HOTSPOTS } from '../../data/heroHotspotsData.js'
 import HeroHotspotPin from './HeroHotspotPin.vue'
@@ -121,6 +144,45 @@ const containerRef = ref(null)
 
 const activeHotspot = ref(null)
 const isDetailOpen = ref(false)
+
+// Phase 1: Responsive 5-Second Intro Video (Desktop vs Mobile)
+const isIntroPlaying = ref(true)
+const introVideoRef = ref(null)
+const isMobile = ref(false)
+
+const checkIsMobile = () => {
+  if (typeof window !== 'undefined') {
+    isMobile.value = window.innerWidth <= 768
+  }
+}
+
+const introVideoSrc = computed(() => {
+  return isMobile.value
+    ? '/final_video/BuikdingHallowGrowMobile.mp4'
+    : '/final_video/BuildingHollowgram_web.mp4'
+})
+
+const handleIntroLoaded = () => {
+  emit('video-loaded')
+}
+
+const handleIntroTimeUpdate = () => {
+  if (!introVideoRef.value) return
+  // Smoothly finish intro after 5.0 seconds
+  if (introVideoRef.value.currentTime >= 5.0) {
+    finishIntro()
+  }
+}
+
+const finishIntro = () => {
+  if (!isIntroPlaying.value) return
+  isIntroPlaying.value = false
+  if (introVideoRef.value) {
+    try {
+      introVideoRef.value.pause()
+    } catch (e) {}
+  }
+}
 
 // Custom Magnetic Follower Cursor State
 const cursorPos = ref({ x: -100, y: -100 })
@@ -156,6 +218,13 @@ const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(c
   }
 })
 
+// Auto-finish intro if user scrolls down
+watch(scrollProgress, (p) => {
+  if (p > 0.02 && isIntroPlaying.value) {
+    finishIntro()
+  }
+})
+
 // Active Room Identifier based on Calibrated Walkthrough Frames
 const activeRoomId = computed(() => {
   const f = currentFrame.value
@@ -174,7 +243,7 @@ const currentRoomName = computed(() => {
 
 // Check if a hotspot should be visible at current frame
 const isHotspotVisible = (spot) => {
-  if (isHoverMode.value) return false
+  if (isHoverMode.value || isIntroPlaying.value) return false
   return currentFrame.value >= spot.startFrame && currentFrame.value <= spot.endFrame
 }
 
@@ -197,6 +266,8 @@ const closeDetail = () => {
 // 1-Click Smooth Teleporting to Room
 const jumpToRoom = (spot) => {
   if (!containerRef.value) return
+  if (isIntroPlaying.value) finishIntro()
+
   let targetProgress = 0.18 // Frame 130
   if (spot.id === 'dining-kitchen-blue') targetProgress = 0.47 // Frame 150
   else if (spot.id === 'master-bedroom-wall') targetProgress = 0.79 // Frame 218
@@ -234,7 +305,19 @@ const handleExploreStudio = () => {
 }
 
 onMounted(() => {
-  // video-loaded is deterministically emitted when the initial resting frame is drawn to canvas
+  checkIsMobile()
+  window.addEventListener('resize', checkIsMobile)
+
+  // Safety timeout in case video fails to autoplay
+  setTimeout(() => {
+    if (isIntroPlaying.value) {
+      emit('video-loaded')
+    }
+  }, 5000)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkIsMobile)
 })
 </script>
 
@@ -270,6 +353,58 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   z-index: 1;
+}
+
+/* Phase 1: 5-Second Intro Video Layer */
+.hero-intro-video-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background-color: #161412;
+  overflow: hidden;
+}
+
+.hero-intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skip-intro-pill {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  z-index: 14;
+  background: rgba(18, 16, 14, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f7f6f4;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skip-intro-pill:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: #D4AF37;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.intro-fade-enter-active,
+.intro-fade-leave-active {
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-fade-enter-from,
+.intro-fade-leave-to {
+  opacity: 0;
 }
 
 .hero-vignette {
@@ -601,6 +736,12 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  .skip-intro-pill {
+    bottom: 16px;
+    right: 16px;
+    padding: 6px 14px;
+    font-size: 0.7rem;
+  }
   .room-switcher-dock {
     bottom: 16px;
     width: 95%;

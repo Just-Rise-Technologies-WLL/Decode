@@ -16,7 +16,7 @@
 - **Modular Components**:
   - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (Hardware-Accelerated 60FPS Dual-Mode Hero Canvas: Mouse-driven 3D rotation at rest with Luxury `‹ 360° › ROTATE` Floating Magnetic Cursor Follower + Scroll-driven 240-frame architectural walkthrough with dynamic room zone indicator pills, LERP inertial physics, and Floating Bottom Room Switcher Dock)
+  - `src/components/hero/ScrollHero.vue` (3-Phase Luxury Hero Engine: 1. Responsive 5-Second Cinematic Streaming Intro Video `BuildingHollowgram_web.mp4` on Desktop / `BuikdingHallowGrowMobile.mp4` on Mobile -> 2. Interactive 3D Mouse Hover Rotation with `‹ 360° › ROTATE` Magnetic Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Inertial Physics, and Room Switcher Dock)
   - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
   - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
   - `src/data/heroHotspotsData.js` (Zone metadata, frame ranges, wall coordinates, and paint specifications: Pin 1 at Frame 130 on Green Wall, Pin 2 at Frame 150 on Blue Wall, Pin 3 at Frame 218 on Master Suite Bedroom Wall)
@@ -27,11 +27,11 @@
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Pinned Side-Scroll with 9 Finish Categories, dynamic scroll width calculation, and 100% full view end spacer)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Stacked Morph-Dissolve 5-Color Room Visualizer rendering shades in sequence: Alabaster White, Emerald Green, Mediterranean Blue, Imperial Red, Deep Maroon), `SwatchGrid.vue`
   - `src/components/projects/ProjectsGrid.vue` (Interactive Before/After Project Cards)
-  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, progress percentage bar with 100% snap on confirmed frame render, and video-loaded fade-out transition)
+  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, progress percentage bar, and video-loaded fade-out transition)
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: Priority loading of initial resting frame 60 with immediate canvas painting before emitting onReady, and 240-frame scroll walkthrough with streamlined ~7% magnetic plateaus for rock-solid frame holds at hotspots without sluggish scroll feel)
+  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: Preloads hover sequence and scroll walkthrough with streamlined ~7% magnetic plateaus for rock-solid frame holds at hotspots)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

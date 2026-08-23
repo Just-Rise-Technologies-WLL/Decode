@@ -91,4 +91,12 @@
 - **Details**:
   - Eliminated initial white background by adding `#181614` styling directly to `index.html` and `#app-root`.
   - Upgraded `useScrollCanvas.js` to prioritize loading the resting frame (`hover_0060.jpg`) and immediately painting it to the `<canvas>` before triggering `onReady()`.
-  - Removed premature `setTimeout` bypass timers from `ScrollHero.vue` and `App.vue` so the loading screen stays active until the initial view is 100% visible and rendered.
+
+### [2026-08-23 03:47]
+- **Activity**: Integrated Responsive 5-Second Cinematic Intro Videos (Desktop & Mobile).
+- **Details**:
+  - Added responsive video source selection in `ScrollHero.vue`:
+    - **Desktop**: `/final_video/BuildingHollowgram_web.mp4`
+    - **Mobile**: `/final_video/BuikdingHallowGrowMobile.mp4`
+  - Automatic 5.0-second timer and scroll watcher that smoothly crossfades from the intro video directly into the 3D mouse hover rotation and scroll walkthrough canvas.
+  - Luxury glassmorphic `[ Skip Intro ❯ ]` button for instant exploration.

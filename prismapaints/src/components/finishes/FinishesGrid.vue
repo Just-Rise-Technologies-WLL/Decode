@@ -58,8 +58,8 @@
 
     <div class="feature-split-slider-box">
       <BeforeAfterSlider 
-        before-img="/images/room_before.png"
-        after-img="/images/room_after.png"
+        before-img="/images/room_before.webp"
+        after-img="/images/room_after.webp"
         before-tag="Before (Unpainted Raw Wall)"
         after-tag="After (Prisma Terracotta Paint)"
         height="460px"

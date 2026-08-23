@@ -13,10 +13,11 @@
 - **Social Link Previews**: OpenGraph (`og:image`, `og:title`, `og:description`) and Twitter Card (`twitter:card`) meta tags in `index.html` referencing 1200x630 dark luxury banner `public/images/og_share_preview.png` for WhatsApp, iMessage, LinkedIn, and Facebook link preview cards.
 - **Git Config**: [.gitignore](file:///Volumes/Files/AppDev/justrise_bahrain/Decode/prismapaints/.gitignore)
 - **Favicon**: `public/favicon.svg` (Prisma Paints Signature Multi-color Triangle Logo)
+- **Assets Format**: 100% High-Performance WebP format across all site images, sequence frames, and 3D textures (Total site image payload slashed by 95.5% from 125.8 MB down to 5.6 MB).
 - **Modular Components**:
   - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (3-Phase Luxury Hero Engine: 1. Responsive 5-Second Cinematic Streaming Intro Video `BuildingHollowgram_web.mp4` on Desktop / `BuikdingHallowGrowMobile.mp4` on Mobile locked to `canplaythrough`/`playing` events -> 2. Interactive 3D Mouse Hover Rotation with `‹ 360° › ROTATE` Magnetic Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Inertial Physics, and Room Switcher Dock)
+  - `src/components/hero/ScrollHero.vue` (3-Phase Luxury Hero Engine: 1. Responsive Streaming Intro Video `BuildingHollowgram_web.mp4` on Desktop / `BuikdingHallowGrowMobile.mp4` on Mobile locked strictly to active rendering with `nextTick` autoplay initialization -> 2. Interactive 3D Mouse Hover Rotation with `‹ 360° › ROTATE` Magnetic Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Inertial Physics, and Room Switcher Dock)
   - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
   - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
   - `src/data/heroHotspotsData.js` (Zone metadata, frame ranges, wall coordinates, and paint specifications: Pin 1 at Frame 130 on Green Wall, Pin 2 at Frame 150 on Blue Wall, Pin 3 at Frame 218 on Master Suite Bedroom Wall)

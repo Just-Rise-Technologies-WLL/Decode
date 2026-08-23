@@ -24,10 +24,12 @@
             autoplay
             muted
             playsinline
+            webkit-playsinline
             preload="auto"
-            @canplay="handleVideoReady"
-            @canplaythrough="handleVideoReady"
-            @playing="handleVideoReady"
+            @loadedmetadata="startPlay"
+            @loadeddata="startPlay"
+            @canplay="startPlay"
+            @playing="handleVideoPlaying"
             @timeupdate="handleIntroTimeUpdate"
             @ended="finishIntro"
           ></video>
@@ -126,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useScrollCanvas } from '../../composables/useScrollCanvas.js'
 import { HERO_HOTSPOTS } from '../../data/heroHotspotsData.js'
 import HeroHotspotPin from './HeroHotspotPin.vue'
@@ -151,6 +153,7 @@ const isDetailOpen = ref(false)
 const isIntroPlaying = ref(true)
 const introVideoRef = ref(null)
 const isMobile = ref(false)
+const isVideoBuffered = ref(false)
 
 const checkIsMobile = () => {
   if (typeof window !== 'undefined') {
@@ -164,20 +167,40 @@ const introVideoSrc = computed(() => {
     : '/final_video/BuildingHollowgram_web.mp4'
 })
 
-const isVideoBuffered = ref(false)
+const startPlay = () => {
+  const vid = introVideoRef.value
+  if (!vid) return
+  vid.muted = true
+  vid.defaultMuted = true
+  vid.playsInline = true
+  const p = vid.play()
+  if (p !== undefined) {
+    p.then(() => {
+      if (!isVideoBuffered.value) {
+        isVideoBuffered.value = true
+        emit('video-loaded')
+      }
+    }).catch(() => {
+      vid.muted = true
+      vid.play().catch(() => {})
+    })
+  }
+}
 
-const handleVideoReady = () => {
+const handleVideoPlaying = () => {
   if (!isVideoBuffered.value) {
     isVideoBuffered.value = true
-    if (introVideoRef.value) {
-      introVideoRef.value.play().catch(() => {})
-    }
     emit('video-loaded')
   }
 }
 
 const handleIntroTimeUpdate = () => {
   if (!introVideoRef.value) return
+  if (!isVideoBuffered.value && introVideoRef.value.currentTime > 0) {
+    isVideoBuffered.value = true
+    emit('video-loaded')
+  }
+
   // Smoothly finish intro after 5.0 seconds
   if (introVideoRef.value.currentTime >= 5.0) {
     finishIntro()
@@ -226,7 +249,7 @@ const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(c
   scrollPrefix: '/sequence/frame_',
   scrollExt: '.webp',
   onReady: () => {
-    // If intro video finished or not active, emit video-loaded
+    // If intro video is not playing, emit video-loaded
     if (!isIntroPlaying.value) {
       emit('video-loaded')
     }
@@ -322,13 +345,9 @@ const handleExploreStudio = () => {
 onMounted(() => {
   checkIsMobile()
   window.addEventListener('resize', checkIsMobile)
-
-  // Safety timeout in case video fails to autoplay
-  setTimeout(() => {
-    if (isIntroPlaying.value) {
-      emit('video-loaded')
-    }
-  }, 5000)
+  nextTick(() => {
+    startPlay()
+  })
 })
 
 onUnmounted(() => {

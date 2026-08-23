@@ -60,9 +60,9 @@ const initThree = () => {
   const cylinderHeight = 2.45
   const geometry = new THREE.CylinderGeometry(radius, radius, cylinderHeight, 64)
 
-  // Load High-Res Official 360° Texture Map (texture 2.png)
+  // Load High-Res Official 360° Texture Map (texture 2.webp)
   const textureLoader = new THREE.TextureLoader()
-  const labelTexture = textureLoader.load('/products/texture 2.png', () => {
+  const labelTexture = textureLoader.load('/products/texture 2.webp', () => {
     renderScene()
   })
   labelTexture.colorSpace = THREE.SRGBColorSpace

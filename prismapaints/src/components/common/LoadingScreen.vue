@@ -4,7 +4,7 @@
       <div class="preloader-content">
         <!-- Logo with Gold Pulse Animation -->
         <div class="logo-wrapper">
-          <img src="/images/prisma_logo.png" alt="Prisma Paints Logo" class="preloader-logo" />
+          <img src="/images/prisma_logo.webp" alt="Prisma Paints Logo" class="preloader-logo" />
         </div>
 
         <span class="preloader-tag">LUXURY DECORATIVE & INDUSTRIAL COATINGS</span>

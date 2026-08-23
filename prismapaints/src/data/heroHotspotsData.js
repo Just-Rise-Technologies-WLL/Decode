@@ -27,7 +27,7 @@ export const HERO_HOTSPOTS = [
       name: 'Prisma Luxury Velvet Matt',
       type: 'Interior Wall Topcoat',
       sheen: 'Dead Flat Velvet (3% Sheen)',
-      image: '/products/green.png',
+      image: '/products/green.webp',
       coverage: '12-14 m²/Litre',
       durability: 'Class 1 Scrub Resistant'
     },
@@ -53,7 +53,7 @@ export const HERO_HOTSPOTS = [
       name: 'Prisma Wonderwall Silk',
       type: 'Luxury Satin Emulsion',
       sheen: 'Silky Sheen (15% Sheen)',
-      image: '/products/%20blue.png',
+      image: '/products/%20blue.webp',
       coverage: '14-16 m²/Litre',
       durability: 'Ultra Washable & Anti-Bacterial'
     },
@@ -79,7 +79,7 @@ export const HERO_HOTSPOTS = [
       name: 'Prisma High-Lux Acrylic Enamel',
       type: 'Luxury Wall Finish',
       sheen: 'Soft Eggshell (8% Sheen)',
-      image: '/products/red.png',
+      image: '/products/red.webp',
       coverage: '12-14 m²/Litre',
       durability: 'UV-Resistant & Non-Fading'
     },

@@ -79,7 +79,7 @@
           <!-- Product 1: Green Can (Left) -->
           <div class="product-card">
             <div class="product-img-box">
-              <img src="/products/green.png" alt="Prisma Emerald Green Finish Can" class="product-img" />
+              <img src="/products/green.webp" alt="Prisma Emerald Green Finish Can" class="product-img" />
             </div>
             <div class="product-info">
               <span class="product-category">ARCHITECTURAL VELVET</span>
@@ -107,7 +107,7 @@
           <!-- Product 3: Blue Can (Right) -->
           <div class="product-card">
             <div class="product-img-box">
-              <img src="/products/ blue.png" alt="Prisma Royal Blue Finish Can" class="product-img" />
+              <img src="/products/%20blue.webp" alt="Prisma Royal Blue Finish Can" class="product-img" />
             </div>
             <div class="product-info">
               <span class="product-category">HIGH-GLOSS MARINE & DECORATIVE</span>
@@ -126,7 +126,7 @@
       :style="canTransformStyle"
     >
       <img 
-        src="/products/red.png" 
+        src="/products/red.webp" 
         alt="Prisma Paints Luxury Red Finish Can" 
         class="animated-red-img" 
       />
@@ -638,7 +638,7 @@ const canTransformStyle = computed(() => {
 
   /* Show direct static image on mobile fallback */
   .target-placeholder {
-    background: url('/products/red.png') center/contain no-repeat;
+    background: url('/products/red.webp') center/contain no-repeat;
   }
 }
 </style>

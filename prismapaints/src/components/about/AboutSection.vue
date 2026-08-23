@@ -47,12 +47,12 @@
           </div>
         </div>
 
-        <!-- 2nd Column: Product Image (red.png) -->
+        <!-- 2nd Column: Product Image (red.webp) -->
         <div class="about-image-col">
           <div class="image-wrapper">
             <div class="image-bg-glow"></div>
             <img 
-              src="/products/red.png" 
+              src="/products/red.webp" 
               alt="Prisma Paints Luxury Red Finish Can" 
               class="about-img" 
             />

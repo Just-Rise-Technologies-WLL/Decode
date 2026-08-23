@@ -7,35 +7,35 @@ export const FIVE_SIGNATURE_SHADES = [
     id: 1, 
     name: 'Alabaster White', 
     hex: '#FAF8F5', 
-    image: '/intractive_panel/WhiteWall.png',
+    image: '/intractive_panel/WhiteWall.webp',
     desc: 'Timeless bright ivory white creating a clean, spacious architectural living space.'
   },
   { 
     id: 2, 
     name: 'Emerald Green', 
     hex: '#2D4A3E', 
-    image: '/intractive_panel/GreenWall.png',
+    image: '/intractive_panel/GreenWall.webp',
     desc: 'Deep soothing forest green providing a peaceful, organic atmosphere.'
   },
   { 
     id: 3, 
     name: 'Mediterranean Blue', 
     hex: '#1E3A5A', 
-    image: '/intractive_panel/BlueWall.png',
+    image: '/intractive_panel/BlueWall.webp',
     desc: 'Vibrant Mediterranean navy blue bringing sophisticated depth and elegance.'
   },
   { 
     id: 4, 
     name: 'Imperial Red', 
     hex: '#A42C25', 
-    image: '/intractive_panel/RedWall.png',
+    image: '/intractive_panel/RedWall.webp',
     desc: 'Bold radiant ruby red delivering a high-lux statement feature wall.'
   },
   { 
     id: 5, 
     name: 'Deep Maroon', 
     hex: '#581D22', 
-    image: '/intractive_panel/MaroonWall.png',
+    image: '/intractive_panel/MaroonWall.webp',
     desc: 'Rich velvet maroon with warm undertones for elegant boutique interiors.'
   }
 ]

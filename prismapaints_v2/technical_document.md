@@ -32,8 +32,8 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Unified 4-Phase Dual-Tier Canvas Engine: Tier 1 fast low-res WebP proxy preloading driving real dynamic percentage, background Tier 2 HD 1080p streaming, dynamic camera scale/zoom math, and seamless 60fps multi-scene scrubbing)
-  - `src/composables/useWallCanvas.js` (Dual-Tier Progressive Wall Layering Canvas Engine: Preloads 240 lightweight WebP frames from `/sequence_wall_low/` for instant scrubbing, upgraded with background 1080p WebP streaming)
+  - `src/composables/useScrollCanvas.js` (Unified 4-Phase Dual-Tier Canvas Engine: Priority-1 First Frame paint < 50ms, Tier 1 fast low-res WebP proxy preloading driving real dynamic percentage, throttled 6-request connection pool, lazy walkthrough streaming when `p > 0.25`, background Tier 2 HD 1080p streaming, dynamic camera scale/zoom math, and seamless 60fps multi-scene scrubbing)
+  - `src/composables/useWallCanvas.js` (Dual-Tier Progressive Wall Layering Canvas Engine: IntersectionObserver deferred loading at `rootMargin: '600px 0px'` to eliminate 480 initial requests on landing, priority Frame 1 paint, preloads 240 lightweight WebP frames from `/sequence_wall_low/` in throttled batches of 10, upgraded with background 1080p WebP streaming)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

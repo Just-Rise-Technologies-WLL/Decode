@@ -153,5 +153,12 @@
   - Added smooth RAF LERP interpolation (`visualProgress`) in `LoadingScreen.vue`, guaranteeing the gold progress bar and percentage numbers glide continuously from 0% to 100% with premium visual feedback.
   - Verified compilation passing with zero errors.
 
-
-
+### [15-10-2026 06:25 AM]
+- **Activity**: Fixed Cloud (Vercel) Blank Screen & Slashed Initial Network Requests via Lazy IntersectionObserver & Throttled Streams.
+- **Details**:
+  - Identified cloud bottleneck: 1,593 concurrent requests were flooding Vercel HTTP/2 stream limits on landing.
+  - Implemented `IntersectionObserver` with a `rootMargin: '600px 0px'` on `useWallCanvas.js`, reducing wall frame requests on initial landing from 480 down to 0.
+  - Spliced priority Frame 1 first paint (< 50ms) before batching in both `useScrollCanvas.js` and `useWallCanvas.js`.
+  - Added lazy walkthrough streaming in `useScrollCanvas.js` that waits until the user scrolls past the Villa sequence (`p > 0.25`) before requesting interior frames.
+  - Slashed initial landing network requests from 1,593 down to ~300 lightweight WebP frames (~2 MB).
+  - Verified production build (`npm run build`) passing with zero errors.

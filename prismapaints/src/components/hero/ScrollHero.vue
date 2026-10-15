@@ -14,6 +14,20 @@
       <!-- Vignette and Ambient Depth Gradient -->
       <div class="hero-vignette"></div>
 
+      <!-- Introductory Hero Brand Title (Fades out seamlessly as user scrolls to build architecture) -->
+      <div 
+        class="hero-intro-text"
+        :style="{
+          opacity: introTextOpacity,
+          transform: `translate(-50%, calc(-50% - ${introTextTranslateY}px))`,
+          pointerEvents: introTextOpacity > 0.05 ? 'auto' : 'none'
+        }"
+      >
+        <span class="hero-intro-eyebrow">THE PRISMA PAINT</span>
+        <h1 class="hero-intro-title">"Bringing Colors to Life"</h1>
+        <div class="hero-intro-gold-line"></div>
+      </div>
+
       <!-- Luxury 360° Floating Magnetic Follower Cursor (Active during Hover Phase) -->
       <div 
         class="hero-cursor-follower"
@@ -159,6 +173,15 @@ const { scrollProgress, currentFrame, currentPhase, isHoverMode, isReady, loadin
   }
 })
 
+// Introductory Brand Title scroll-driven fade out (0% -> 8% scroll)
+const introTextOpacity = computed(() => {
+  return Math.max(0, Math.min(1, 1 - scrollProgress.value * 12.5))
+})
+
+const introTextTranslateY = computed(() => {
+  return scrollProgress.value * 160
+})
+
 // Dynamic Scroll Mouse Label based on Active Phase
 const scrollPhaseLabel = computed(() => {
   if (currentPhase.value === 'hologram') return 'Scroll to Build Architecture'
@@ -287,6 +310,63 @@ const handleExploreStudio = () => {
               linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 20%, transparent 75%, rgba(0, 0, 0, 0.65) 100%);
   z-index: 2;
   pointer-events: none;
+}
+
+/* Introductory Hero Brand Title Overlay */
+.hero-intro-text {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  width: 90%;
+  max-width: 960px;
+  pointer-events: none;
+  transition: opacity 0.1s linear, transform 0.1s linear;
+}
+
+.hero-intro-eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #D4AF37;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+  margin-bottom: 14px;
+}
+
+.hero-intro-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5.5vw, 4.6rem);
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.15;
+  color: #ffffff;
+  margin: 0 0 18px 0;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.85), 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.hero-intro-gold-line {
+  width: 90px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+}
+
+@media (max-width: 768px) {
+  .hero-intro-text {
+    top: 35%;
+  }
+  .hero-intro-eyebrow {
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
 }
 
 /* Luxury 360 Floating Follower Cursor */

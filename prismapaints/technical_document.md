@@ -17,7 +17,7 @@
 - **Modular Components**:
   - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (Option 1 Unified Luxury Hero Engine: 1. Scroll-driven Holographic Building Rise `public/sequence_hologram/` -> 2. 360° Interactive Mouse Hover Rotation with `‹ 360° › ROTATE` Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Physics, and Room Switcher Dock)
+  - `src/components/hero/ScrollHero.vue` (Option 1 Unified Luxury Hero Engine: Introductory Brand Title overlay ["THE PRISMA PAINT: Bringing Colors to Life"] with smooth scroll-driven fade out (0% -> 8% scroll) -> 1. Scroll-driven Holographic Building Rise `public/sequence_hologram/` -> 2. 360° Interactive Mouse Hover Rotation with `‹ 360° › ROTATE` Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Physics, and Room Switcher Dock)
   - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
   - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
   - `src/data/heroHotspotsData.js` (Zone metadata, frame ranges, wall coordinates, and paint specifications: Pin 1 at Frame 130 on Green Wall, Pin 2 at Frame 150 on Blue Wall, Pin 3 at Frame 218 on Master Suite Bedroom Wall)
@@ -32,8 +32,8 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Unified 3-Phase Dual-Tier Canvas Engine: Tier 1 fast low-res WebP proxy preloading driving real dynamic percentage, background Tier 2 HD 1080p streaming, interactive 360° mouse rotation, and seamless 60fps walkthrough scrubbing)
-  - `src/composables/useWallCanvas.js` (Dual-Tier Progressive Wall Layering Canvas Engine: Preloads 240 lightweight WebP frames from `/sequence_wall_low/` for instant scrubbing, upgraded with background 1080p WebP streaming)
+  - `src/composables/useScrollCanvas.js` (Unified 3-Phase Dual-Tier Canvas Engine: Priority-1 First Frame paint `holo_0001.webp` < 50ms, Tier 1 fast low-res WebP proxy preloading driving real dynamic percentage, throttled 6-request connection pool, lazy walkthrough streaming when `p > 0.20`, background Tier 2 HD 1080p streaming, interactive 360° mouse rotation, and seamless 60fps walkthrough scrubbing)
+  - `src/composables/useWallCanvas.js` (Dual-Tier Progressive Wall Layering Canvas Engine: IntersectionObserver deferred loading at `rootMargin: '600px 0px'` to eliminate 480 initial requests on landing, priority Frame 1 paint, preloads 240 lightweight WebP frames from `/sequence_wall_low/` in throttled batches of 10, upgraded with background 1080p WebP streaming)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

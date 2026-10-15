@@ -135,3 +135,22 @@
   - Upgraded `useWallCanvas.js` to dual-tier progressive loading.
   - Verified production build compiles cleanly with zero errors in 1.41s.
 
+### [15-10-2026 06:25 AM]
+- **Activity**: Fixed Cloud Network Congestion & Applied Lazy IntersectionObserver & Throttled Streams to Option 1.
+- **Details**:
+  - Implemented `IntersectionObserver` with `rootMargin: '600px 0px'` in `useWallCanvas.js` to defer 480 wall frames until user scrolls within 600px of section.
+  - Spliced priority Frame 1 first paint (`holo_0001.webp` < 50ms) before queue processing in `useScrollCanvas.js`.
+  - Added lazy walkthrough streaming in `useScrollCanvas.js` that waits until user scrolls past Hologram phase (`p > 0.20`).
+  - Throttled batch sizes to 6 requests with synchronous cache checks.
+  - Verified production build (`npm run build`) passing with zero errors in 1.52s.
+
+### [15-10-2026 06:44 AM]
+- **Activity**: Added Introductory Luxury Hero Brand Title with Scroll-Driven Fade to Option 1 (`prismapaints`).
+- **Details**:
+  - Integrated centered luxury typography banner in `ScrollHero.vue`:
+    - Eyebrow: `THE PRISMA PAINT` in metallic gold tracked typography (`#D4AF37`, 5px letter-spacing).
+    - Headline: `"Bringing Colors to Life"` in `'Playfair Display', serif` italic luxury font.
+    - Accented with a sleek horizontal gold light line.
+  - Connected reactive scroll fade out: Text starts at 100% opacity at scroll = 0 and smoothly fades to 0% as the visitor scrolls through the first 8% of the page (`p * 12.5`), accompanied by a subtle cinematic upward float (`translateY: 0 → -20px`).
+  - Preserved complete isolation: `prismapaints_v2` was strictly untouched.
+  - Verified production build (`npm run build`) passing with zero errors in 1.68s.

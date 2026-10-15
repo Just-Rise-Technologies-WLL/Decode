@@ -45,3 +45,16 @@
 - **Fix Implemented**:
   1. Strictly bound preloader dismissal to confirmed frame advancement (`video.currentTime >= 0.05s`). On hard reloads, the loading screen stays visible until the video is actively rolling.
   2. Generated and bound instant WebP video poster frames (`intro_poster.webp` and `intro_poster_mobile.webp`) to eliminate any black screen gaps.
+
+### [15-10-2026 06:25 AM]
+- **Issue**: Live deployment on Vercel (`decode-sigma-liard.vercel.app`) showed a black screen and hung for several seconds with 1,593 network requests firing simultaneously in Chrome DevTools.
+- **Root Cause**:
+  1. `useWallCanvas` immediately loaded 240 low + 240 HD frames on landing, even though the wall section is 3000px down the page.
+  2. `useScrollCanvas` fired all low and HD frames for both hologram/villa and walkthrough concurrently.
+  3. This saturated HTTP/2 stream multiplexing on Vercel CDN, starving Frame 1 in the network queue and leaving the canvas blank.
+- **Fix Implemented**:
+  1. Wrapped `useWallCanvas` loading in an `IntersectionObserver` (`rootMargin: '600px 0px'`), deferring all 480 wall frames until the user actually scrolls towards that section (saving 480 requests on landing).
+  2. Implemented Priority 1 First Paint for Frame 1 (`holo_0001.webp`) rendered in < 50ms before any queue processing starts.
+  3. Added lazy walkthrough streaming in `useScrollCanvas` so walkthrough frames are only requested when `p > 0.20`.
+  4. Throttled batch sizes to 6 requests with synchronous cache hit checks (`img.complete && img.naturalWidth !== 0`) and event listeners attached before `src`.
+

@@ -3,7 +3,7 @@
     <nav class="navbar-floating-pill">
       <!-- Brand Logo -->
       <a href="#" class="brand-logo" aria-label="Prisma Paints Home">
-        <img src="/images/prisma_logo.webp" alt="Prisma Paints Logo" class="logo-img" />
+        <img src="/images/prisma_logo_dark.webp" alt="Prisma Paints Logo" class="logo-img" />
       </a>
 
       <!-- Desktop Navigation Links -->
@@ -71,10 +71,10 @@ defineEmits(['open-modal'])
 }
 
 .logo-img {
-  height: 80px;
+  height: 42px;
   width: auto;
   object-fit: contain;
-  border-radius: 6px;
+  display: block;
 }
 
 .nav-links-desktop {

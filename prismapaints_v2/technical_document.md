@@ -15,8 +15,8 @@
 - **Favicon**: `public/favicon.svg` (Prisma Paints Signature Multi-color Triangle Logo)
 - **Assets Format**: 100% High-Performance WebP format across all site images, sequence frames, and 3D textures (Total site image payload slashed by 95.5% from 125.8 MB down to 5.6 MB).
 - **Modular Components**:
-  - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
-  - `src/components/layout/Footer.vue`
+  - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material, new retina dark navy brand logo `/images/prisma_logo_dark.webp`, and `SHOP` menu link)
+  - `src/components/layout/Footer.vue` (Dark Luxury Charcoal Footer `#171110` with brand mark encapsulated in a luxury frosted light badge `.footer-logo-badge` with `rgba(255, 255, 255, 0.95)` and `backdrop-filter: blur(14px)` for crisp contrast)
   - `src/components/hero/ScrollHero.vue` (Option 2 Unified Luxury Hero Engine: 1. Pure Scroll-Driven Scrubbing of Real Bahrain Villa 300-Frame Sequence `public/sequence_villa/` -> 2. Resting Plateau Hold on Last Frame featuring Prisma IMAJ Paint Can & Villa -> 3. Cinematic Dynamic Building Zoom-in centered on Villa Archway Entrance -> 4. Cross-dissolve into 240-Frame 3D Interior Walkthrough with Interactive Wall Hotspot Pins, LERP Physics, and Room Switcher Dock)
   - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
   - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
@@ -28,7 +28,7 @@
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Pinned Side-Scroll with 9 Finish Categories, dynamic scroll width calculation, and 100% full view end spacer)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Stacked Morph-Dissolve 5-Color Room Visualizer rendering shades in sequence: Alabaster White, Emerald Green, Mediterranean Blue, Imperial Red, Deep Maroon), `SwatchGrid.vue`
   - `src/components/projects/ProjectsGrid.vue` (Interactive Before/After Project Cards)
-  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with 100% real dynamic download progress tracking :progress="loadingProgress", smooth gold pulse animation, and cubic-bezier fade-out transition)
+  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with 100% real dynamic download progress tracking :progress="loadingProgress", brand mark encapsulated in luxury frosted light plate `.preloader-badge`, smooth gold pulse animation, and cubic-bezier fade-out transition)
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:

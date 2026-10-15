@@ -162,3 +162,24 @@
   - Added lazy walkthrough streaming in `useScrollCanvas.js` that waits until the user scrolls past the Villa sequence (`p > 0.25`) before requesting interior frames.
   - Slashed initial landing network requests from 1,593 down to ~300 lightweight WebP frames (~2 MB).
   - Verified production build (`npm run build`) passing with zero errors.
+
+### [15-10-2026 11.14 AM]
+- **Activity**: Integrated New Brand Logo (`prisma-logo-right1.png`) into Navigation Bar, Footer, and Loading Screen across Both Projects (`prismapaints` and `prismapaints_v2`).
+- **Details**:
+  - Cropped original high-res logo (`prisma-logo-right1.png`) and generated retina-sharp, ultra-lightweight WebP asset (`public/images/prisma_logo_dark.webp`, ~28 KB down from ~800 KB) and PNG fallback in both projects.
+  - **Navigation Bar (`Navbar.vue`)**: Connected `/images/prisma_logo_dark.webp` within the existing frosted glass floating pill capsule (`rgba(255, 255, 255, 0.48)`), providing sharp contrast and high legibility for the dark navy typography and orange accent triangle.
+  - **Footer (`Footer.vue`)**: Wrapped brand mark in a luxury frosted light badge (`.footer-logo-badge`: `rgba(255, 255, 255, 0.95)`, `backdrop-filter: blur(14px)`, `box-shadow`) against the dark charcoal background (`#171110`), ensuring vivid contrast and premium presentation.
+  - **Loading Screen (`LoadingScreen.vue`)**: Wrapped preloader brand mark in a matching luxury frosted light plate (`.preloader-badge`) with ambient gold pulse animation against the dark preloader background (`#181614`).
+
+### [15-10-2026 11.31 AM]
+- **Activity**: Refined Brand Mark Badge to True Luminous Translucent Frosted Glass with Blue Logo & Fixed Projects Heading Text Contrast across Both Projects.
+- **Details**:
+  - Restyled `.footer-logo-badge` and `.preloader-badge` with **true translucent frosted glass** (`background: linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.58) 100%)`, `backdrop-filter: blur(24px) saturate(180%)`, specular inner bevel highlight `inset 0 1px 2px rgba(255,255,255,0.95)`).
+  - Maintained the signature **deep blue/navy brand logo** (`prisma_logo_dark.webp`) inside the frosted glass plate for sharp, authentic brand presence.
+  - **Fixed Projects Header Text Contrast (`ProjectsGrid.vue`)**: Added scoped typography styles on dark `#181614` background:
+    - `.section-subtitle` (`PROJECTS`): Metallic gold (`#D4AF37`, letter-spacing 3px).
+    - `.section-title` (`Trusted on landmark builds across the region`): Pure crisp white (`#FFFFFF`).
+    - `.section-desc`: Readable soft off-white (`rgba(255, 255, 255, 0.75)`).
+  - Verified production build passing with zero errors across both projects.
+
+

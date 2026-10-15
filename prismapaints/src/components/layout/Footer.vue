@@ -4,8 +4,8 @@
       <div class="footer-grid">
         
         <div class="footer-brand">
-          <a href="#" class="brand-logo" aria-label="Prisma Paints Home" style="display: inline-block; margin-bottom: 16px;">
-            <img src="/images/prisma_logo.webp" alt="Prisma Paints Logo" style="height: 80px; width: auto; object-fit: contain; border-radius: 6px;" />
+          <a href="#" class="footer-logo-badge" aria-label="Prisma Paints Home">
+            <img src="/images/prisma_logo_dark.webp" alt="Prisma Paints Logo" class="footer-logo-img" />
           </a>
           <p>Prisma Modern Decorative Paints is a paint manufacturing company located at Sitra Industrial Area, Kingdom of Bahrain.</p>
         </div>
@@ -65,6 +65,43 @@
   grid-template-columns: 2fr 1fr 1fr 1.5fr;
   gap: 40px;
   margin-bottom: 60px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.58) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  padding: 10px 20px;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    0 10px 30px rgba(0, 0, 0, 0.28);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.footer-logo-badge:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.68) 100%);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    0 14px 38px rgba(0, 0, 0, 0.38);
+}
+
+.footer-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .footer-brand p {

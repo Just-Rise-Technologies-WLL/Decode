@@ -4,7 +4,9 @@
       <div class="preloader-content">
         <!-- Logo with Gold Pulse Animation -->
         <div class="logo-wrapper">
-          <img src="/images/prisma_logo.webp" alt="Prisma Paints Logo" class="preloader-logo" />
+          <div class="preloader-badge">
+            <img src="/images/prisma_logo_dark.webp" alt="Prisma Paints Logo" class="preloader-logo" />
+          </div>
         </div>
 
         <span class="preloader-tag">LUXURY DECORATIVE & INDUSTRIAL COATINGS</span>
@@ -74,12 +76,31 @@ onUnmounted(() => {
 .logo-wrapper {
   margin-bottom: 24px;
   animation: logoPulse 2s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+}
+
+.preloader-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.62) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: 16px;
+  padding: 14px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    0 12px 36px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(212, 175, 55, 0.25);
 }
 
 .preloader-logo {
-  height: 90px;
+  height: 58px;
   width: auto;
   object-fit: contain;
+  display: block;
 }
 
 .preloader-tag {

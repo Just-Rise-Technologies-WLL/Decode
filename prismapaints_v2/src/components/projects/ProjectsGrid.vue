@@ -39,6 +39,20 @@ import { PROJECTS } from '../../data/projectsData.js'
   padding: 120px 0;
 }
 
+.projects-section .section-subtitle {
+  color: var(--clr-accent-gold, #D4AF37);
+  letter-spacing: 3px;
+  font-weight: 600;
+}
+
+.projects-section .section-title {
+  color: #FFFFFF;
+}
+
+.projects-section .section-desc {
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

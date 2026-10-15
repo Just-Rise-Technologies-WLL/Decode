@@ -145,4 +145,13 @@
   - Upgraded `useScrollCanvas.js` and `useWallCanvas.js` to dual-tier rendering (`loadedHd[i] || loadedLow[i]`), ensuring immediate butter-smooth 60fps scrolling without dropped frames while HD frames stream seamlessly in the background.
   - Verified build passes with zero errors in 1.62s.
 
+### [15-10-2026 05:47 AM]
+- **Activity**: Fixed Cached Image Event Listener Order & Implemented Silky RAF Progress Interpolation in Preloader.
+- **Details**:
+  - Fixed JavaScript event binding in `useScrollCanvas.js`: Attached `img.onload` / `img.onerror` BEFORE assigning `img.src` and added synchronous `.complete` checks to prevent cached browser hits from skipping count increments.
+  - Added a 2.8s safety threshold preventing preloader lock if any individual network frame stalls.
+  - Added smooth RAF LERP interpolation (`visualProgress`) in `LoadingScreen.vue`, guaranteeing the gold progress bar and percentage numbers glide continuously from 0% to 100% with premium visual feedback.
+  - Verified compilation passing with zero errors.
+
+
 

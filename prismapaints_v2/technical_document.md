@@ -28,11 +28,12 @@
   - `src/components/finishes/FinishesGrid.vue` (Horizontal Pinned Side-Scroll with 9 Finish Categories, dynamic scroll width calculation, and 100% full view end spacer)
   - `src/components/studio/ColorStudio.vue`, `RoomVisualizer.vue` (Stacked Morph-Dissolve 5-Color Room Visualizer rendering shades in sequence: Alabaster White, Emerald Green, Mediterranean Blue, Imperial Red, Deep Maroon), `SwatchGrid.vue`
   - `src/components/projects/ProjectsGrid.vue` (Interactive Before/After Project Cards)
-  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with Prisma Paints logo gold pulse animation, progress percentage bar, and video-loaded fade-out transition)
+  - `src/components/common/LoadingScreen.vue` (Full-Screen Luxury Brand Preloader with 100% real dynamic download progress tracking :progress="loadingProgress", smooth gold pulse animation, and cubic-bezier fade-out transition)
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Unified 4-Phase 60FPS LERP Canvas Engine: Priority Frame 1 paint in < 50ms with zero black screen, background staggered batch streaming, dynamic camera scale/zoom math, and seamless multi-scene transitions)
+  - `src/composables/useScrollCanvas.js` (Unified 4-Phase Dual-Tier Canvas Engine: Tier 1 fast low-res WebP proxy preloading driving real dynamic percentage, background Tier 2 HD 1080p streaming, dynamic camera scale/zoom math, and seamless 60fps multi-scene scrubbing)
+  - `src/composables/useWallCanvas.js` (Dual-Tier Progressive Wall Layering Canvas Engine: Preloads 240 lightweight WebP frames from `/sequence_wall_low/` for instant scrubbing, upgraded with background 1080p WebP streaming)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

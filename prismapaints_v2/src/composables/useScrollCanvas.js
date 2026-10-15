@@ -92,6 +92,17 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
 
     let lowLoadedCount = 0
 
+    const triggerComplete = () => {
+      if (!isReady.value) {
+        isReady.value = true
+        loadingProgress.value = 100
+        if (options.onProgress) options.onProgress(100)
+        if (options.onReady) options.onReady()
+        // Immediately start HD background upgrade stream
+        startBackgroundHdStream()
+      }
+    }
+
     const updateProgress = () => {
       lowLoadedCount++
       const pct = Math.min(100, Math.round((lowLoadedCount / villaFrameCount) * 100))
@@ -107,23 +118,27 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
       }
 
       // When all 300 low-res frames are in memory, dismiss preloader
-      if (lowLoadedCount === villaFrameCount && !isReady.value) {
-        isReady.value = true
-        if (options.onReady) options.onReady()
-        // Immediately start HD background upgrade stream
-        startBackgroundHdStream()
+      if (lowLoadedCount >= villaFrameCount) {
+        triggerComplete()
       }
     }
 
+    // Safety timeout: Ensure site opens within 2.8s even if network stalls on a single frame
+    setTimeout(() => {
+      if (!isReady.value && lowLoadedCount >= 20) {
+        triggerComplete()
+      }
+    }, 2800)
+
     // Step 1: Preload all 300 lightweight low-res proxy frames (~2.4 MB total)
-    // Batch in groups of 12 for high concurrency download
+    // Batch in groups of 16 for high concurrency download
     const lowQueue = []
     for (let i = 1; i <= villaFrameCount; i++) {
       lowQueue.push(i)
     }
 
     let lowIdx = 0
-    const LOW_BATCH = 12
+    const LOW_BATCH = 16
 
     const loadNextLowBatch = () => {
       if (lowIdx >= lowQueue.length) return
@@ -132,18 +147,28 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
         const num = lowQueue[k]
         const padded = String(num).padStart(4, '0')
         const img = new Image()
-        img.src = `${villaLowPrefix}${padded}${villaExt}`
-        img.onload = () => {
+        let handled = false
+
+        const onDone = () => {
+          if (handled) return
+          handled = true
           loadedVillaLow[num - 1] = img
           updateProgress()
         }
-        img.onerror = () => {
-          updateProgress()
+
+        // Attach listeners BEFORE assigning src to capture cached hits
+        img.onload = onDone
+        img.onerror = onDone
+        img.src = `${villaLowPrefix}${padded}${villaExt}`
+
+        // Immediate check for synchronous cache hit
+        if (img.complete && img.naturalWidth !== 0) {
+          onDone()
         }
       }
       lowIdx = end
       if (lowIdx < lowQueue.length) {
-        setTimeout(loadNextLowBatch, 15)
+        setTimeout(loadNextLowBatch, 10)
       }
     }
 

@@ -11,43 +11,42 @@
 
         <!-- Gold Progress Bar -->
         <div class="progress-bar-track">
-          <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
+          <div class="progress-bar-fill" :style="{ width: visualProgress + '%' }"></div>
         </div>
 
-        <span class="progress-num">{{ Math.round(progress) }}%</span>
+        <span class="progress-num">{{ Math.round(visualProgress) }}%</span>
       </div>
     </div>
   </transition>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
-  isLoading: { type: Boolean, default: true }
+  isLoading: { type: Boolean, default: true },
+  progress: { type: Number, default: 0 }
 })
 
-const progress = ref(20)
-let progressInterval = null
+const visualProgress = ref(0)
+let animId = null
 
-watch(() => props.isLoading, (loading) => {
-  if (!loading) {
-    progress.value = 100
-    if (progressInterval) clearInterval(progressInterval)
+const tick = () => {
+  const target = Math.min(100, Math.max(0, props.progress))
+  if (visualProgress.value < target) {
+    const diff = target - visualProgress.value
+    const step = Math.max(0.6, diff * 0.15)
+    visualProgress.value = Math.min(target, visualProgress.value + step)
   }
-})
+  animId = requestAnimationFrame(tick)
+}
 
 onMounted(() => {
-  progressInterval = setInterval(() => {
-    if (progress.value < 90) {
-      progress.value += Math.random() * 8 + 4
-      if (progress.value > 90) progress.value = 90
-    }
-  }, 120)
+  animId = requestAnimationFrame(tick)
 })
 
 onUnmounted(() => {
-  if (progressInterval) clearInterval(progressInterval)
+  if (animId) cancelAnimationFrame(animId)
 })
 </script>
 

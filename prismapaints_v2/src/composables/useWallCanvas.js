@@ -18,31 +18,71 @@ export function useWallCanvas(canvasRef, containerRef) {
   let animationFrameId = null
   let bgStreamTimer = null
 
-  // Preload all 240 lightweight low-res proxy frames (~1.4 MB)
+  let isPreloadStarted = false
+
+  // Preload all 240 lightweight low-res proxy frames (~1.4 MB) in controlled batches
   const preloadLowFrames = () => {
     let loadedCount = 0
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image()
-      const frameNum = String(i).padStart(4, '0')
-      img.src = `/sequence_wall_low/frame_${frameNum}.webp`
 
-      img.onload = () => {
-        loadedLowImages[i - 1] = img
-        loadedCount++
-        if (loadedCount === 1) {
-          renderFrame(0)
+    // Priority 1: Instant First Frame
+    const firstImg = new Image()
+    firstImg.onload = () => {
+      loadedLowImages[0] = firstImg
+      renderFrame(0)
+    }
+    firstImg.src = '/sequence_wall_low/frame_0001.webp'
+    if (firstImg.complete && firstImg.naturalWidth !== 0) {
+      loadedLowImages[0] = firstImg
+      renderFrame(0)
+    }
+
+    const queue = []
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      queue.push(i)
+    }
+
+    let qIdx = 0
+    const BATCH_SIZE = 10
+
+    const loadNextBatch = () => {
+      if (qIdx >= queue.length) return
+      const end = Math.min(qIdx + BATCH_SIZE, queue.length)
+      for (let k = qIdx; k < end; k++) {
+        const frameNum = String(queue[k]).padStart(4, '0')
+        const img = new Image()
+        let handled = false
+
+        const onDone = () => {
+          if (handled) return
+          handled = true
+          loadedLowImages[queue[k] - 1] = img
+          loadedCount++
+          if (loadedCount === 1) {
+            renderFrame(0)
+          }
+          if (loadedCount === TOTAL_FRAMES) {
+            isLoaded.value = true
+            renderFrame(0)
+            startHdUpgradeStream()
+          }
         }
-        if (loadedCount === TOTAL_FRAMES) {
-          isLoaded.value = true
-          renderFrame(0)
-          startHdUpgradeStream()
+
+        img.onload = onDone
+        img.onerror = onDone
+        img.src = `/sequence_wall_low/frame_${frameNum}.webp`
+
+        if (img.complete && img.naturalWidth !== 0) {
+          onDone()
         }
       }
-      img.onerror = () => {
-        loadedCount++
-        if (loadedCount === TOTAL_FRAMES) isLoaded.value = true
+
+      qIdx = end
+      if (qIdx < queue.length) {
+        setTimeout(loadNextBatch, 15)
       }
     }
+
+    loadNextBatch()
   }
 
   // Background stream full HD WebP frames in small batches
@@ -56,10 +96,10 @@ export function useWallCanvas(canvasRef, containerRef) {
       for (let k = hdIdx; k < end; k++) {
         const frameNum = String(k + 1).padStart(4, '0')
         const img = new Image()
-        img.src = `/sequence_wall/frame_${frameNum}.webp`
         img.onload = () => {
           loadedHdImages[k] = img
         }
+        img.src = `/sequence_wall/frame_${frameNum}.webp`
       }
       hdIdx = end
       if (hdIdx < TOTAL_FRAMES) {
@@ -147,14 +187,33 @@ export function useWallCanvas(canvasRef, containerRef) {
     }
   }
 
+  let wallObserver = null
+
   onMounted(() => {
-    preloadLowFrames()
+    // Defer loading until user scrolls near the wall section (600px ahead)
+    if (typeof IntersectionObserver !== 'undefined' && containerRef && containerRef.value) {
+      wallObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isPreloadStarted) {
+            isPreloadStarted = true
+            preloadLowFrames()
+            if (wallObserver) wallObserver.disconnect()
+          }
+        })
+      }, { rootMargin: '600px 0px' })
+      wallObserver.observe(containerRef.value)
+    } else {
+      isPreloadStarted = true
+      preloadLowFrames()
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('resize', handleScroll, { passive: true })
     animationFrameId = requestAnimationFrame(animate)
   })
 
   onUnmounted(() => {
+    if (wallObserver) wallObserver.disconnect()
     window.removeEventListener('scroll', handleScroll)
     window.removeEventListener('resize', handleScroll)
     if (animationFrameId) cancelAnimationFrame(animationFrameId)

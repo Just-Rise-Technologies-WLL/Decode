@@ -119,3 +119,19 @@
 - **Details**:
   - Removed premature `p.then()` preloader dismissal in `ScrollHero.vue`. Preloader now stays active until the video has confirmed advancing frames (`video.currentTime >= 0.05s`).
   - Extracted instant WebP posters (`intro_poster.webp` and `intro_poster_mobile.webp`) bound directly to the `<video>` element, ensuring zero black screen during buffering.
+
+### [15-10-2026 05:57 AM]
+- **Activity**: Converted 1st Intro Video into Scrollable Hologram Sequence & Implemented Dual-Tier Progressive Loading Engine in Option 1 (`prismapaints`).
+- **Details**:
+  - Extracted 180 HD WebP frames (`public/sequence_hologram/`) and 180 low-res proxy frames (`public/sequence_hologram_low/`, 480x270 WebP, 2.1 MB total) from `BuildingHollowgram_web.mp4`.
+  - Generated 240 low-res proxy frames for 3D walkthrough (`public/sequence_low/`, 2.6 MB) and 240 low-res proxy frames for wall layering (`public/sequence_wall_low/`, 1.4 MB).
+  - Converted all 240 wall frames in `public/sequence_wall/` to WebP.
+  - Removed HTML5 `<video>` tag, video sources, and skip intro button from `ScrollHero.vue`.
+  - Implemented 3-phase interactive scroll journey in `useScrollCanvas.js`:
+    - **Phase 1 (0% to 35% scroll)**: Scroll-driven holographic building rise as visitor scrolls.
+    - **Phase 2 (35% to 45% scroll)**: 360° interactive mouse hover rotation with floating follower cursor.
+    - **Phase 3 (45% to 100% scroll)**: 3D interior walkthrough with Hotspot Pins (Frame 130 Living Room, Frame 150 Dining Gallery, Frame 218 Master Bedroom) and interactive Room Switcher Dock.
+  - Connected real dynamic download progress (`0%` to `100%`) with smooth RAF glide interpolation in `LoadingScreen.vue`.
+  - Upgraded `useWallCanvas.js` to dual-tier progressive loading.
+  - Verified production build compiles cleanly with zero errors in 1.41s.
+

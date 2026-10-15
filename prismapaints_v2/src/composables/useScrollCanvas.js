@@ -1,11 +1,10 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 /**
  * High-Performance Dual-Tier Progressive Architectural Canvas Engine:
- * Tier 1 (Fast Low-Res Proxy): Preloads 300 lightweight WebP frames (~2.4 MB)
- *        driving the 100% real dynamic progress bar (0% -> 100%).
- * Tier 2 (HD Progressive Upgrade): Streams 1080p HD frames in the background,
- *        smoothly swapping them into canvas memory without blocking user scroll.
+ * 1. Immediate Standalone Paint: Loads Frame 1 alone with top priority in < 50ms so canvas is NEVER black.
+ * 2. Controlled Connection Throttling: Maximum 6 active connections prevents Vercel rate-limiting.
+ * 3. Lazy Phase Streaming: Walkthrough frames only stream when user scrolls near the walkthrough.
  */
 export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   const villaFrameCount = options.villaFrameCount || 300
@@ -35,6 +34,7 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
 
   let animFrameId = null
   let batchStreamTimer = null
+  let walkStreamStarted = false
 
   // Dual-tier image caches
   const loadedVillaLow = new Array(villaFrameCount)
@@ -90,7 +90,25 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
   const initSequences = () => {
     handleResize()
 
-    let lowLoadedCount = 0
+    // --- STEP 1: PRIORITY 1 FIRST FRAME PAINT (Eliminates Black Screen completely) ---
+    const primaryImg = new Image()
+    const onPrimaryLoaded = () => {
+      loadedVillaLow[0] = primaryImg
+      if (canvasRef.value) {
+        drawCoverMedia(primaryImg, primaryImg.naturalWidth || 480, primaryImg.naturalHeight || 270)
+      }
+      if (animFrameId === null) {
+        startAnimationLoop()
+      }
+    }
+    primaryImg.onload = onPrimaryLoaded
+    primaryImg.src = `${villaLowPrefix}0001${villaExt}`
+    if (primaryImg.complete && primaryImg.naturalWidth !== 0) {
+      onPrimaryLoaded()
+    }
+
+    // --- STEP 2: CONTROLLED LOW-RES BATCH STREAM (Max 6 concurrent connections) ---
+    let lowLoadedCount = 1
 
     const triggerComplete = () => {
       if (!isReady.value) {
@@ -98,8 +116,7 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
         loadingProgress.value = 100
         if (options.onProgress) options.onProgress(100)
         if (options.onReady) options.onReady()
-        // Immediately start HD background upgrade stream
-        startBackgroundHdStream()
+        startVillaHdStream()
       }
     }
 
@@ -111,34 +128,25 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
         options.onProgress(pct)
       }
 
-      // Initial first paint as soon as frame 1 arrives
-      if (lowLoadedCount === 1 && loadedVillaLow[0] && canvasRef.value) {
-        drawCoverMedia(loadedVillaLow[0], loadedVillaLow[0].naturalWidth || 480, loadedVillaLow[0].naturalHeight || 270)
-        if (animFrameId === null) startAnimationLoop()
-      }
-
-      // When all 300 low-res frames are in memory, dismiss preloader
       if (lowLoadedCount >= villaFrameCount) {
         triggerComplete()
       }
     }
 
-    // Safety timeout: Ensure site opens within 2.8s even if network stalls on a single frame
+    // Safety timeout: Ensure site unlocks within 2.5s even if network stalls on a single frame
     setTimeout(() => {
-      if (!isReady.value && lowLoadedCount >= 20) {
+      if (!isReady.value && lowLoadedCount >= 15) {
         triggerComplete()
       }
-    }, 2800)
+    }, 2500)
 
-    // Step 1: Preload all 300 lightweight low-res proxy frames (~2.4 MB total)
-    // Batch in groups of 16 for high concurrency download
     const lowQueue = []
-    for (let i = 1; i <= villaFrameCount; i++) {
+    for (let i = 2; i <= villaFrameCount; i++) {
       lowQueue.push(i)
     }
 
     let lowIdx = 0
-    const LOW_BATCH = 16
+    const LOW_BATCH = 6 // Browser connection limit standard
 
     const loadNextLowBatch = () => {
       if (lowIdx >= lowQueue.length) return
@@ -156,76 +164,77 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
           updateProgress()
         }
 
-        // Attach listeners BEFORE assigning src to capture cached hits
         img.onload = onDone
         img.onerror = onDone
         img.src = `${villaLowPrefix}${padded}${villaExt}`
 
-        // Immediate check for synchronous cache hit
         if (img.complete && img.naturalWidth !== 0) {
           onDone()
         }
       }
       lowIdx = end
       if (lowIdx < lowQueue.length) {
-        setTimeout(loadNextLowBatch, 10)
+        setTimeout(loadNextLowBatch, 20)
       }
     }
 
-    loadNextLowBatch()
+    // Start low-res queue 50ms after primary frame paint
+    setTimeout(loadNextLowBatch, 50)
   }
 
-  // Step 2: Background HD Upgrade Stream (Walkthrough Low + Villa HD + Walkthrough HD)
-  const startBackgroundHdStream = () => {
-    // 1. Walkthrough low-res proxy frames (240 frames, ~2.6 MB)
-    const walkLowQueue = []
-    for (let i = 1; i <= walkthroughFrameCount; i++) {
-      walkLowQueue.push({ type: 'walkLow', num: i })
-    }
+  // Step 3: Progressive HD Villa Stream in gentle background batches of 4
+  const startVillaHdStream = () => {
+    let hdIdx = 0
+    const HD_BATCH = 4
 
-    // 2. Villa 1080p HD frames
-    const villaHdQueue = []
-    for (let i = 1; i <= villaFrameCount; i++) {
-      villaHdQueue.push({ type: 'villaHd', num: i })
-    }
-
-    // 3. Walkthrough 1080p HD frames
-    const walkHdQueue = []
-    for (let i = 1; i <= walkthroughFrameCount; i++) {
-      walkHdQueue.push({ type: 'walkHd', num: i })
-    }
-
-    const bgQueue = [...walkLowQueue, ...villaHdQueue, ...walkHdQueue]
-    let bgIdx = 0
-    const BG_BATCH = 6
-
-    const processNextBgBatch = () => {
-      if (bgIdx >= bgQueue.length) return
-      const end = Math.min(bgIdx + BG_BATCH, bgQueue.length)
-      for (let k = bgIdx; k < end; k++) {
-        const item = bgQueue[k]
-        const padded = String(item.num).padStart(4, '0')
+    const processNextHdBatch = () => {
+      if (hdIdx >= villaFrameCount) return
+      const end = Math.min(hdIdx + HD_BATCH, villaFrameCount)
+      for (let k = hdIdx; k < end; k++) {
+        const padded = String(k + 1).padStart(4, '0')
         const img = new Image()
-
-        if (item.type === 'walkLow') {
-          img.src = `${walkthroughLowPrefix}${padded}${walkthroughExt}`
-          img.onload = () => { loadedWalkthroughLow[item.num - 1] = img }
-        } else if (item.type === 'villaHd') {
-          img.src = `${villaHdPrefix}${padded}${villaExt}`
-          img.onload = () => { loadedVillaHd[item.num - 1] = img }
-        } else if (item.type === 'walkHd') {
-          img.src = `${walkthroughHdPrefix}${padded}${walkthroughExt}`
-          img.onload = () => { loadedWalkthroughHd[item.num - 1] = img }
-        }
+        img.src = `${villaHdPrefix}${padded}${villaExt}`
+        img.onload = () => { loadedVillaHd[k] = img }
       }
-
-      bgIdx = end
-      if (bgIdx < bgQueue.length) {
-        batchStreamTimer = setTimeout(processNextBgBatch, 25)
+      hdIdx = end
+      if (hdIdx < villaFrameCount) {
+        batchStreamTimer = setTimeout(processNextHdBatch, 35)
       }
     }
 
-    setTimeout(processNextBgBatch, 100)
+    setTimeout(processNextHdBatch, 100)
+  }
+
+  // Step 4: Lazy Walkthrough Stream (Only triggers when user scrolls near walkthrough)
+  const startWalkthroughStream = () => {
+    if (walkStreamStarted) return
+    walkStreamStarted = true
+
+    let wIdx = 0
+    const W_BATCH = 6
+
+    const processNextWalkBatch = () => {
+      if (wIdx >= walkthroughFrameCount) return
+      const end = Math.min(wIdx + W_BATCH, walkthroughFrameCount)
+      for (let k = wIdx; k < end; k++) {
+        const padded = String(k + 1).padStart(4, '0')
+        // Load low-res proxy first
+        const lowImg = new Image()
+        lowImg.src = `${walkthroughLowPrefix}${padded}${walkthroughExt}`
+        lowImg.onload = () => { loadedWalkthroughLow[k] = lowImg }
+
+        // Also load HD
+        const hdImg = new Image()
+        hdImg.src = `${walkthroughHdPrefix}${padded}${walkthroughExt}`
+        hdImg.onload = () => { loadedWalkthroughHd[k] = hdImg }
+      }
+      wIdx = end
+      if (wIdx < walkthroughFrameCount) {
+        setTimeout(processNextWalkBatch, 30)
+      }
+    }
+
+    processNextWalkBatch()
   }
 
   // 60FPS Continuous RAF Loop with Physics LERP & Dual-Tier Resolution Upgrade
@@ -238,6 +247,11 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
       const w = canvas.width
       const h = canvas.height
       const p = scrollProgress.value
+
+      // Dynamic trigger for walkthrough streaming when user scrolls near it
+      if (p > 0.25 && !walkStreamStarted) {
+        startWalkthroughStream()
+      }
 
       ctx.fillStyle = '#161412'
       ctx.fillRect(0, 0, w, h)
@@ -253,7 +267,7 @@ export function useScrollCanvas(canvasRef, containerRef, options = {}) {
         const vIndex = Math.min(villaFrameCount - 1, Math.max(0, Math.round(currentVillaFloat)))
         currentFrame.value = vIndex
 
-        // Prefer HD, fallback to Low-Res Proxy (instant 60fps)
+        // Prefer HD, fallback to Low-Res Proxy, fallback to Frame 1 (guaranteed loaded)
         const img = loadedVillaHd[vIndex] || loadedVillaLow[vIndex] || loadedVillaLow[0]
         if (img && img.complete && img.naturalWidth !== 0) {
           drawCoverMedia(img, img.naturalWidth, img.naturalHeight, 1.0)

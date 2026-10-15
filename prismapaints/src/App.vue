@@ -1,7 +1,7 @@
 <template>
   <div id="app-root">
-    <!-- Full-Screen Luxury Preloader -->
-    <LoadingScreen :is-loading="isSiteLoading" />
+    <!-- Full-Screen Luxury Preloader with Real Dynamic Progress -->
+    <LoadingScreen :is-loading="isSiteLoading" :progress="loadingProgress" />
 
     <!-- Header Navigation -->
     <Navbar @open-modal="openModal" />
@@ -12,6 +12,7 @@
       @open-modal="openModal" 
       @toggle-palette="togglePalette"
       @video-loaded="dismissPreloader" 
+      @progress="handleHeroProgress"
     />
 
     <!-- About Us & Interactive Product Showcase Section -->
@@ -82,20 +83,26 @@ import ToastNotification from './components/common/ToastNotification.vue'
 import { useColorStudio } from './composables/useColorStudio.js'
 
 const isSiteLoading = ref(true)
+const loadingProgress = ref(0)
+
+const handleHeroProgress = (pct) => {
+  loadingProgress.value = pct
+}
 
 const dismissPreloader = () => {
+  loadingProgress.value = 100
   if (isSiteLoading.value) {
     setTimeout(() => {
       isSiteLoading.value = false
-    }, 350)
+    }, 450)
   }
 }
 
 onMounted(() => {
-  // Long safety fallback (15 seconds) only if user has extremely slow connection or network stall
+  // Safety fallback (4 seconds)
   setTimeout(() => {
     dismissPreloader()
-  }, 15000)
+  }, 4000)
 })
 
 const {

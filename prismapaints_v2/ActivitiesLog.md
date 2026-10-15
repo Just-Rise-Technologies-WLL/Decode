@@ -119,3 +119,17 @@
 - **Details**:
   - Removed premature `p.then()` preloader dismissal in `ScrollHero.vue`. Preloader now stays active until the video has confirmed advancing frames (`video.currentTime >= 0.05s`).
   - Extracted instant WebP posters (`intro_poster.webp` and `intro_poster_mobile.webp`) bound directly to the `<video>` element, ensuring zero black screen during buffering.
+
+### [15-10-2026 05:18 AM]
+- **Activity**: Integrated Real Villa Video Frame Sequence, Last Frame Pause Hold, and Building Zoom-in Engine into Option 2 (`prismapaints_v2`).
+- **Details**:
+  - Extracted 300 optimized WebP frames from `1013(2).mp4` into `public/sequence_villa/` (1920x1080, quality 82, 20 MB total).
+  - Removed old HTML5 `<video>` tag (`BuildingHollowgram_web.mp4` / `BuikdingHallowGrowMobile.mp4`) and skip intro button.
+  - Implemented 4-phase unified canvas journey in `useScrollCanvas.js`:
+    - **Phase 1 (0% to 35% scroll)**: Pure scroll-driven scrubbing through the real Bahrain villa sequence (`villa_0001.webp` to `villa_0300.webp`).
+    - **Phase 2 (35% to 45% scroll)**: Scroll plateau holding on the last frame (`villa_0300.webp` featuring the Prisma IMAJ paint can and villa).
+    - **Phase 3 (45% to 58% scroll)**: Cinematic dynamic building zoom-in centered on the villa entrance archway (zooming from 1.0x to 2.5x with smooth cubic ease).
+    - **Phase 4 (58% to 100% scroll)**: Seamless crossfade into the 240-frame 3D interior walkthrough with active Hotspot Pins (Green Living Area Frame 130, Blue Dining Area Frame 150, Master Suite Frame 218) and interactive Room Switcher Dock.
+  - Spliced instant Frame 1 canvas paint (< 50ms) to trigger preloader dismissal with zero black screen.
+  - Verified production compilation (`npm run build`) passing with zero errors.
+

@@ -17,7 +17,7 @@
 - **Modular Components**:
   - `src/components/layout/Navbar.vue` (Floating Rounded Glassmorphism Pill Navigation Bar with Light Frosted Crystal Glass material and `SHOP` menu link)
   - `src/components/layout/Footer.vue`
-  - `src/components/hero/ScrollHero.vue` (3-Phase Luxury Hero Engine: 1. Responsive Streaming Intro Video `BuildingHollowgram_web.mp4` on Desktop / `BuikdingHallowGrowMobile.mp4` on Mobile with instant WebP poster fallback and preloader dismissal strictly bound to `video.currentTime >= 0.05s` -> 2. Interactive 3D Mouse Hover Rotation with `‹ 360° › ROTATE` Magnetic Follower Cursor -> 3. 240-Frame Architectural Walkthrough with Dynamic Wall Hotspot Pins, LERP Inertial Physics, and Room Switcher Dock)
+  - `src/components/hero/ScrollHero.vue` (Option 2 Unified Luxury Hero Engine: 1. Pure Scroll-Driven Scrubbing of Real Bahrain Villa 300-Frame Sequence `public/sequence_villa/` -> 2. Resting Plateau Hold on Last Frame featuring Prisma IMAJ Paint Can & Villa -> 3. Cinematic Dynamic Building Zoom-in centered on Villa Archway Entrance -> 4. Cross-dissolve into 240-Frame 3D Interior Walkthrough with Interactive Wall Hotspot Pins, LERP Physics, and Room Switcher Dock)
   - `src/components/hero/HeroHotspotPin.vue` (Interactive wall hotspot pin with radar pulse waves, active state morphing, and preview tags)
   - `src/components/hero/HotspotDetailCard.vue` (Jotun-inspired floating contextual card on desktop and slide-up bottom sheet drawer on mobile with color swatch specs, topcoat preview, 1-click sample requests, and palette saving)
   - `src/data/heroHotspotsData.js` (Zone metadata, frame ranges, wall coordinates, and paint specifications: Pin 1 at Frame 130 on Green Wall, Pin 2 at Frame 150 on Blue Wall, Pin 3 at Frame 218 on Master Suite Bedroom Wall)
@@ -32,7 +32,7 @@
   - `src/components/common/BeforeAfterSlider.vue` (Reusable Drag Comparison Component)
   - `src/components/common/SampleModal.vue` & `ToastNotification.vue`
 - **Composables**:
-  - `src/composables/useScrollCanvas.js` (Dual-Mode 60FPS LERP Canvas Engine: High-performance WebP support with priority 2-frame initial paint in < 50ms and smart 6-connection background batch streaming queue that prevents host network congestion)
+  - `src/composables/useScrollCanvas.js` (Unified 4-Phase 60FPS LERP Canvas Engine: Priority Frame 1 paint in < 50ms with zero black screen, background staggered batch streaming, dynamic camera scale/zoom math, and seamless multi-scene transitions)
   - `src/composables/useColorStudio.js` (Reactive state manager for surfaces, finishes, palette shortlist, and modal controls)
 
 ---

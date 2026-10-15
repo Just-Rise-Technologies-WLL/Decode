@@ -3,67 +3,17 @@
     ref="containerRef" 
     class="hero-scroll-track" 
     id="hero-walkthrough"
-    @mousemove="handleHeroMouseMove"
-    @mouseleave="handleHeroMouseLeave"
   >
     <!-- Sticky Pinned Viewport Container -->
     <div class="hero-pinned-wrapper">
-      <!-- 60FPS Hardware Accelerated Dual-Mode Canvas -->
+      <!-- 60FPS Hardware Accelerated Canvas -->
       <canvas ref="canvasRef" class="hero-canvas"></canvas>
 
       <!-- Vignette and Ambient Depth Gradient -->
       <div class="hero-vignette"></div>
 
-      <!-- Phase 1: 5-Second Cinematic Intro Video Layer (Desktop + Mobile Responsive) -->
-      <transition name="intro-fade">
-        <div v-if="isIntroPlaying" class="hero-intro-video-wrapper">
-          <video 
-            ref="introVideoRef"
-            class="hero-intro-video"
-            :src="introVideoSrc"
-            :poster="introPosterSrc"
-            autoplay
-            muted
-            playsinline
-            webkit-playsinline
-            preload="auto"
-            @loadedmetadata="startPlay"
-            @loadeddata="startPlay"
-            @canplay="startPlay"
-            @playing="handleVideoPlaying"
-            @timeupdate="handleIntroTimeUpdate"
-            @ended="finishIntro"
-          ></video>
-
-          <!-- Skip Intro Button -->
-          <button class="skip-intro-pill" @click="finishIntro" aria-label="Explore 3D Walkthrough">
-            <span>Skip Intro ❯</span>
-          </button>
-        </div>
-      </transition>
-
-      <!-- Luxury 360° Floating Magnetic Follower Cursor (Desktop Only) -->
-      <div 
-        class="hero-cursor-follower"
-        :class="{ 
-          'is-visible': cursorVisible && scrollProgress < 0.04 && !isIntroPlaying,
-          'is-hovering-btn': isHoveringBtn
-        }"
-        :style="{ 
-          transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0)` 
-        }"
-      >
-        <!-- Center Precision Dot -->
-        <div class="cursor-dot"></div>
-        <!-- Orbit 360 Badge -->
-        <div class="cursor-pill-badge" v-if="!isHoveringBtn && isHoverMode">
-          <span class="pill-arrows">‹ 360° ›</span>
-          <span class="pill-title">ROTATE</span>
-        </div>
-      </div>
-
-      <!-- Hotspots Wall Pin Overlay (Active during scroll walkthrough) -->
-      <div class="hotspots-layer" :class="{ 'is-hidden': isHoverMode || isIntroPlaying }">
+      <!-- Hotspots Wall Pin Overlay (Active during 3D walkthrough) -->
+      <div class="hotspots-layer" :class="{ 'is-hidden': currentPhase !== 'walkthrough' }">
         <HeroHotspotPin 
           v-for="spot in HERO_HOTSPOTS"
           :key="spot.id"
@@ -75,14 +25,14 @@
       </div>
 
       <!-- Room Zone Floating Pill Indicator (Top Center) -->
-      <div class="room-nav-pill" :class="{ 'is-visible': scrollProgress > 0.02 && !isIntroPlaying }">
+      <div class="room-nav-pill" :class="{ 'is-visible': currentPhase === 'walkthrough' }">
         <div class="room-nav-dot"></div>
         <span class="room-nav-text">{{ currentRoomName }}</span>
         <span class="room-nav-frame">Frame {{ currentFrame + 1 }}/240</span>
       </div>
 
       <!-- Interactive Bottom Room Switcher Dock -->
-      <div class="room-switcher-dock" :class="{ 'is-visible': scrollProgress > 0.015 && !isIntroPlaying }">
+      <div class="room-switcher-dock" :class="{ 'is-visible': currentPhase === 'walkthrough' }">
         <div class="dock-inner">
           <button 
             v-for="spot in HERO_HOTSPOTS"
@@ -103,15 +53,15 @@
         </div>
       </div>
 
-      <!-- Interactive Mouse 3D Rotate & Scroll Explorer Indicator -->
+      <!-- Interactive Dynamic Scroll Explorer Indicator -->
       <div 
         class="scroll-indicator"
-        :style="{ opacity: isIntroPlaying ? 0 : Math.max(0, 1 - scrollProgress * 4.5) }"
+        :class="{ 'is-hidden': isDetailOpen || scrollProgress > 0.96 }"
       >
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
-        <span class="scroll-label">Scroll to Explore Walkthrough</span>
+        <span class="scroll-label">{{ scrollPhaseLabel }}</span>
       </div>
 
       <!-- Interactive Hotspot Detail Card & Mobile Slide-Up Drawer -->
@@ -129,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import { useScrollCanvas } from '../../composables/useScrollCanvas.js'
 import { HERO_HOTSPOTS } from '../../data/heroHotspotsData.js'
 import HeroHotspotPin from './HeroHotspotPin.vue'
@@ -150,127 +100,30 @@ const containerRef = ref(null)
 const activeHotspot = ref(null)
 const isDetailOpen = ref(false)
 
-// Phase 1: Responsive 5-Second Intro Video (Desktop vs Mobile)
-const isIntroPlaying = ref(true)
-const introVideoRef = ref(null)
-const isMobile = ref(false)
-const isVideoBuffered = ref(false)
-
-const checkIsMobile = () => {
-  if (typeof window !== 'undefined') {
-    isMobile.value = window.innerWidth <= 768
-  }
-}
-
-const introVideoSrc = computed(() => {
-  return isMobile.value
-    ? '/final_video/BuikdingHallowGrowMobile.mp4'
-    : '/final_video/BuildingHollowgram_web.mp4'
-})
-
-const introPosterSrc = computed(() => {
-  return isMobile.value
-    ? '/final_video/intro_poster_mobile.webp'
-    : '/final_video/intro_poster.webp'
-})
-
-const startPlay = () => {
-  const vid = introVideoRef.value
-  if (!vid) return
-  vid.muted = true
-  vid.defaultMuted = true
-  vid.playsInline = true
-  const p = vid.play()
-  if (p !== undefined) {
-    p.catch(() => {
-      if (introVideoRef.value) {
-        introVideoRef.value.muted = true
-        introVideoRef.value.play().catch(() => {})
-      }
-    })
-  }
-}
-
-const handleVideoPlaying = () => {
-  // Only trigger dismiss when video is confirmed actively rendering frames
-  if (!isVideoBuffered.value && introVideoRef.value && introVideoRef.value.currentTime >= 0.05) {
-    isVideoBuffered.value = true
-    emit('video-loaded')
-  }
-}
-
-const handleIntroTimeUpdate = () => {
-  if (!introVideoRef.value) return
-  // On uncached hard reloads, only dismiss once frames are visibly advancing
-  if (!isVideoBuffered.value && introVideoRef.value.currentTime >= 0.05) {
-    isVideoBuffered.value = true
-    emit('video-loaded')
-  }
-
-  // Smoothly finish intro after 5.0 seconds
-  if (introVideoRef.value.currentTime >= 5.0) {
-    finishIntro()
-  }
-}
-
-const finishIntro = () => {
-  if (!isIntroPlaying.value) return
-  isIntroPlaying.value = false
-  if (introVideoRef.value) {
-    try {
-      introVideoRef.value.pause()
-    } catch (e) {}
-  }
-}
-
-// Custom Magnetic Follower Cursor State
-const cursorPos = ref({ x: -100, y: -100 })
-const cursorVisible = ref(false)
-const isHoveringBtn = ref(false)
-
-const handleHeroMouseMove = (e) => {
-  cursorPos.value = {
-    x: e.clientX,
-    y: e.clientY
-  }
-  cursorVisible.value = true
-
-  const target = e.target
-  if (target && (target.closest('button') || target.closest('a') || target.closest('.dock-pill') || target.closest('.hotspot-pin-btn') || target.closest('.hotspot-card'))) {
-    isHoveringBtn.value = true
-  } else {
-    isHoveringBtn.value = false
-  }
-}
-
-const handleHeroMouseLeave = () => {
-  cursorVisible.value = false
-}
-
-const { scrollProgress, currentFrame, isHoverMode, isReady } = useScrollCanvas(canvasRef, containerRef, {
-  hoverFrameCount: 120,
-  hoverPrefix: '/sequence_hover/hover_',
-  hoverExt: '.webp',
-  scrollFrameCount: 240,
-  scrollPrefix: '/sequence/frame_',
-  scrollExt: '.webp',
+const { scrollProgress, currentFrame, currentPhase, isReady } = useScrollCanvas(canvasRef, containerRef, {
+  villaFrameCount: 300,
+  villaPrefix: '/sequence_villa/villa_',
+  villaExt: '.webp',
+  walkthroughFrameCount: 240,
+  walkthroughPrefix: '/sequence/frame_',
+  walkthroughExt: '.webp',
   onReady: () => {
-    // If intro video is not playing, emit video-loaded
-    if (!isIntroPlaying.value) {
-      emit('video-loaded')
-    }
+    // Instantly dismiss preloader when initial frame is painted
+    emit('video-loaded')
   }
 })
 
-// Auto-finish intro if user scrolls down
-watch(scrollProgress, (p) => {
-  if (p > 0.02 && isIntroPlaying.value) {
-    finishIntro()
-  }
+// Dynamic Scroll Mouse Label based on Active Architectural Phase
+const scrollPhaseLabel = computed(() => {
+  if (currentPhase.value === 'villa') return 'Scroll to Explore Exterior'
+  if (currentPhase.value === 'pause') return 'Scroll to Zoom In'
+  if (currentPhase.value === 'zoom') return 'Entering Architecture'
+  return 'Scroll to Explore Walkthrough'
 })
 
 // Active Room Identifier based on Calibrated Walkthrough Frames
 const activeRoomId = computed(() => {
+  if (currentPhase.value !== 'walkthrough') return ''
   const f = currentFrame.value
   if (f < 140) return 'living-room-green'
   if (f < 185) return 'dining-kitchen-blue'
@@ -287,7 +140,7 @@ const currentRoomName = computed(() => {
 
 // Check if a hotspot should be visible at current frame
 const isHotspotVisible = (spot) => {
-  if (isHoverMode.value || isIntroPlaying.value) return false
+  if (currentPhase.value !== 'walkthrough') return false
   return currentFrame.value >= spot.startFrame && currentFrame.value <= spot.endFrame
 }
 
@@ -307,14 +160,13 @@ const closeDetail = () => {
   }, 350)
 }
 
-// 1-Click Smooth Teleporting to Room
+// 1-Click Smooth Teleporting to Room within Walkthrough Phase
 const jumpToRoom = (spot) => {
   if (!containerRef.value) return
-  if (isIntroPlaying.value) finishIntro()
 
-  let targetProgress = 0.18 // Frame 130
-  if (spot.id === 'dining-kitchen-blue') targetProgress = 0.47 // Frame 150
-  else if (spot.id === 'master-bedroom-wall') targetProgress = 0.79 // Frame 218
+  let targetProgress = 0.70 // Living Area (Frame 130)
+  if (spot.id === 'dining-kitchen-blue') targetProgress = 0.81 // Dining Gallery (Frame 150)
+  else if (spot.id === 'master-bedroom-wall') targetProgress = 0.94 // Master Bedroom (Frame 218)
 
   const containerRect = containerRef.value.getBoundingClientRect()
   const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -347,24 +199,12 @@ const handleExploreStudio = () => {
     studioElem.scrollIntoView({ behavior: 'smooth' })
   }
 }
-
-onMounted(() => {
-  checkIsMobile()
-  window.addEventListener('resize', checkIsMobile)
-  nextTick(() => {
-    startPlay()
-  })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', checkIsMobile)
-})
 </script>
 
 <style scoped>
 .hero-scroll-track {
   position: relative;
-  height: 280vh;
+  height: 520vh;
   background-color: #161412;
 }
 
@@ -395,148 +235,13 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-/* Phase 1: 5-Second Intro Video Layer */
-.hero-intro-video-wrapper {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  background-color: #161412;
-  overflow: hidden;
-}
-
-.hero-intro-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.skip-intro-pill {
-  position: absolute;
-  bottom: 28px;
-  right: 28px;
-  z-index: 14;
-  background: rgba(18, 16, 14, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #f7f6f4;
-  padding: 8px 18px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.skip-intro-pill:hover {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #D4AF37;
-  color: #ffffff;
-  transform: translateY(-2px);
-}
-
-.intro-fade-enter-active,
-.intro-fade-leave-active {
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.intro-fade-enter-from,
-.intro-fade-leave-to {
-  opacity: 0;
-}
-
 .hero-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.05) 40%, rgba(10, 8, 7, 0.6) 100%),
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.04) 40%, rgba(10, 8, 7, 0.55) 100%),
               linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 20%, transparent 75%, rgba(0, 0, 0, 0.65) 100%);
   z-index: 2;
   pointer-events: none;
-}
-
-/* Luxury 360 Floating Follower Cursor */
-.hero-cursor-follower {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transform: translate3d(-100px, -100px, 0);
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.05s linear;
-  will-change: transform;
-}
-
-.hero-cursor-follower.is-visible {
-  opacity: 1;
-}
-
-.hero-cursor-follower.is-hovering-btn {
-  opacity: 0.25;
-}
-
-.cursor-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #D4AF37;
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.9), 0 0 2px #ffffff;
-  transform: translate(-50%, -50%);
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
-}
-
-.hero-cursor-follower.is-hovering-btn .cursor-dot {
-  width: 22px;
-  height: 22px;
-  background: rgba(212, 175, 55, 0.2);
-  border: 1.5px solid #D4AF37;
-}
-
-.cursor-pill-badge {
-  background: rgba(18, 16, 14, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  border-radius: 100px;
-  padding: 5px 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transform: translate(6px, -50%);
-  white-space: nowrap;
-  animation: floatCursorPill 2s ease-in-out infinite alternate;
-}
-
-@keyframes floatCursorPill {
-  0% { transform: translate(6px, -50%) scale(0.98); }
-  100% { transform: translate(10px, -50%) scale(1.02); }
-}
-
-.pill-arrows {
-  color: #D4AF37;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.pill-title {
-  color: #f7f6f4;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-@media (pointer: coarse), (hover: none) {
-  .hero-cursor-follower {
-    display: none !important;
-  }
 }
 
 /* Hotspots Pin Overlay */
@@ -550,6 +255,7 @@ onUnmounted(() => {
 
 .hotspots-layer.is-hidden {
   opacity: 0;
+  pointer-events: none;
 }
 
 /* Active Room Nav Pill (Top Center) */
@@ -729,7 +435,7 @@ onUnmounted(() => {
 /* Scroll Mouse Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 85px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -740,6 +446,10 @@ onUnmounted(() => {
   color: #ffffff;
   transition: opacity 0.3s ease;
   pointer-events: none;
+}
+
+.scroll-indicator.is-hidden {
+  opacity: 0;
 }
 
 .scroll-mouse {
@@ -776,12 +486,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .skip-intro-pill {
-    bottom: 16px;
-    right: 16px;
-    padding: 6px 14px;
-    font-size: 0.7rem;
-  }
   .room-switcher-dock {
     bottom: 16px;
     width: 95%;
@@ -798,10 +502,14 @@ onUnmounted(() => {
     font-size: 0.7rem;
   }
   .dock-shade-code {
-    display: none;
+    font-size: 0.6rem;
   }
-  .scroll-indicator {
-    bottom: 70px;
+  .room-nav-pill {
+    top: 80px;
+    padding: 5px 14px;
+  }
+  .room-nav-text {
+    font-size: 0.72rem;
   }
 }
 </style>

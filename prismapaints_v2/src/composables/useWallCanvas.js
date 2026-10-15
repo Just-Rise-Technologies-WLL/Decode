@@ -1,46 +1,86 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
+/**
+ * Dual-Tier Progressive Wall Layering Canvas Engine:
+ * Tier 1 (Low-Res Proxy): Preloads 240 lightweight WebP frames from /sequence_wall_low/ (~1.4 MB).
+ * Tier 2 (HD WebP Upgrade): Background streams crisp 1080p WebP frames from /sequence_wall/.
+ */
 export function useWallCanvas(canvasRef, containerRef) {
   const scrollProgress = ref(0)
   const isLoaded = ref(false)
 
   const TOTAL_FRAMES = 240
-  const images = []
+  const loadedLowImages = new Array(TOTAL_FRAMES)
+  const loadedHdImages = new Array(TOTAL_FRAMES)
 
   let currentFrameIndex = 0
   let targetFrameIndex = 0
   let animationFrameId = null
+  let bgStreamTimer = null
 
-  // Preload all 240 HD sequence frames
-  const preloadFrames = () => {
+  // Preload all 240 lightweight low-res proxy frames (~1.4 MB)
+  const preloadLowFrames = () => {
     let loadedCount = 0
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image()
       const frameNum = String(i).padStart(4, '0')
-      img.src = `/sequence_wall/frame_${frameNum}.jpg`
+      img.src = `/sequence_wall_low/frame_${frameNum}.webp`
 
       img.onload = () => {
+        loadedLowImages[i - 1] = img
         loadedCount++
+        if (loadedCount === 1) {
+          renderFrame(0)
+        }
         if (loadedCount === TOTAL_FRAMES) {
           isLoaded.value = true
           renderFrame(0)
+          startHdUpgradeStream()
         }
       }
-      images.push(img)
+      img.onerror = () => {
+        loadedCount++
+        if (loadedCount === TOTAL_FRAMES) isLoaded.value = true
+      }
     }
   }
 
-  // Draw current frame to canvas maintaining aspect ratio
+  // Background stream full HD WebP frames in small batches
+  const startHdUpgradeStream = () => {
+    let hdIdx = 0
+    const BATCH_SIZE = 6
+
+    const loadNextHdBatch = () => {
+      if (hdIdx >= TOTAL_FRAMES) return
+      const end = Math.min(hdIdx + BATCH_SIZE, TOTAL_FRAMES)
+      for (let k = hdIdx; k < end; k++) {
+        const frameNum = String(k + 1).padStart(4, '0')
+        const img = new Image()
+        img.src = `/sequence_wall/frame_${frameNum}.webp`
+        img.onload = () => {
+          loadedHdImages[k] = img
+        }
+      }
+      hdIdx = end
+      if (hdIdx < TOTAL_FRAMES) {
+        bgStreamTimer = setTimeout(loadNextHdBatch, 25)
+      }
+    }
+
+    setTimeout(loadNextHdBatch, 100)
+  }
+
+  // Draw current frame to canvas maintaining aspect ratio with dual-tier fallback
   const renderFrame = (index) => {
     if (!canvasRef.value) return
     const canvas = canvasRef.value
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const img = images[index]
+    // Prefer HD, fallback to Low-Res Proxy
+    const img = loadedHdImages[index] || loadedLowImages[index]
     if (!img || !img.complete) return
 
-    // Auto resize canvas to container size
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const rect = canvas.getBoundingClientRect()
     
@@ -53,7 +93,7 @@ export function useWallCanvas(canvasRef, containerRef) {
     ctx.scale(dpr, dpr)
     ctx.clearRect(0, 0, rect.width, rect.height)
 
-    // Contain aspect ratio draw so full frame fits inside canvas without cropping top/bottom details
+    // Aspect contain scaling
     const imgRatio = img.width / img.height
     const canvasRatio = rect.width / rect.height
     let drawW, drawH, drawX, drawY
@@ -76,8 +116,7 @@ export function useWallCanvas(canvasRef, containerRef) {
 
   // Butter-Smooth LERP Animation Loop
   const animate = () => {
-    // LERP easing: smoothly interpolate current frame toward target frame
-    const delta = (targetFrameIndex - currentFrameIndex) * 0.12
+    const delta = (targetFrameIndex - currentFrameIndex) * 0.14
     if (Math.abs(delta) > 0.01) {
       currentFrameIndex += delta
       const roundedIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(currentFrameIndex)))
@@ -86,7 +125,6 @@ export function useWallCanvas(canvasRef, containerRef) {
     animationFrameId = requestAnimationFrame(animate)
   }
 
-  // Update target frame index on scroll
   const handleScroll = () => {
     if (!containerRef.value) return
     const rect = containerRef.value.getBoundingClientRect()
@@ -110,7 +148,7 @@ export function useWallCanvas(canvasRef, containerRef) {
   }
 
   onMounted(() => {
-    preloadFrames()
+    preloadLowFrames()
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('resize', handleScroll, { passive: true })
     animationFrameId = requestAnimationFrame(animate)
@@ -120,6 +158,7 @@ export function useWallCanvas(canvasRef, containerRef) {
     window.removeEventListener('scroll', handleScroll)
     window.removeEventListener('resize', handleScroll)
     if (animationFrameId) cancelAnimationFrame(animationFrameId)
+    if (bgStreamTimer) clearTimeout(bgStreamTimer)
   })
 
   return {

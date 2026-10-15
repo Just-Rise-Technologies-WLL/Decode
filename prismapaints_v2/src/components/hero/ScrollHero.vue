@@ -92,7 +92,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['open-modal', 'video-loaded', 'toggle-palette'])
+const emit = defineEmits(['open-modal', 'video-loaded', 'toggle-palette', 'progress'])
 
 const canvasRef = ref(null)
 const containerRef = ref(null)
@@ -100,15 +100,18 @@ const containerRef = ref(null)
 const activeHotspot = ref(null)
 const isDetailOpen = ref(false)
 
-const { scrollProgress, currentFrame, currentPhase, isReady } = useScrollCanvas(canvasRef, containerRef, {
+const { scrollProgress, currentFrame, currentPhase, isReady, loadingProgress } = useScrollCanvas(canvasRef, containerRef, {
   villaFrameCount: 300,
   villaPrefix: '/sequence_villa/villa_',
   villaExt: '.webp',
   walkthroughFrameCount: 240,
   walkthroughPrefix: '/sequence/frame_',
   walkthroughExt: '.webp',
+  onProgress: (p) => {
+    emit('progress', p)
+  },
   onReady: () => {
-    // Instantly dismiss preloader when initial frame is painted
+    emit('progress', 100)
     emit('video-loaded')
   }
 })

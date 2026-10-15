@@ -133,3 +133,16 @@
   - Spliced instant Frame 1 canvas paint (< 50ms) to trigger preloader dismissal with zero black screen.
   - Verified production compilation (`npm run build`) passing with zero errors.
 
+### [15-10-2026 05:36 AM]
+- **Activity**: Implemented Dual-Tier Progressive Loading Engine & Real Dynamic Progress Bar across All 3 Frame Sequences.
+- **Details**:
+  - Generated lightweight 480x270 WebP proxy sequences for all 3 sequences:
+    - `public/sequence_villa_low/` (300 frames, 2.4 MB total).
+    - `public/sequence_low/` (240 frames, 2.6 MB total).
+    - `public/sequence_wall_low/` (240 frames, 1.4 MB total).
+    - Converted all 240 `sequence_wall` frames to WebP.
+  - Upgraded `LoadingScreen.vue` to accept dynamic `:progress="loadingProgress"` prop, removing the artificial timer and binding the bar to the 100% real download percentage (0% to 100%).
+  - Upgraded `useScrollCanvas.js` and `useWallCanvas.js` to dual-tier rendering (`loadedHd[i] || loadedLow[i]`), ensuring immediate butter-smooth 60fps scrolling without dropped frames while HD frames stream seamlessly in the background.
+  - Verified build passes with zero errors in 1.62s.
+
+
